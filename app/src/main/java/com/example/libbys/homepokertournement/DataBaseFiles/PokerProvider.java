@@ -1,9 +1,11 @@
-package DataBaseFiles;
+package com.example.libbys.homepokertournement.DataBaseFiles;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -35,7 +37,8 @@ public class PokerProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] strings, @Nullable String s, @Nullable String[] strings1, @Nullable String s1) {
-        return null;
+        SQLiteDatabase database = db.getReadableDatabase();
+        return database.query(PlayerContract.PlayerEntry.TABLE_NAME, strings, s, strings1, null, null, null);
     }
 
     @Nullable
@@ -47,7 +50,9 @@ public class PokerProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
-        return null;
+        SQLiteDatabase database = db.getWritableDatabase();
+        long rowID = database.insert(PlayerContract.PlayerEntry.TABLE_NAME, null, contentValues);
+        return ContentUris.withAppendedId(uri, rowID);
     }
 
     @Override
