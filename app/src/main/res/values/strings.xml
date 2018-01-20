@@ -5,4 +5,7 @@
     <string name="Buyin"> BUYIN: \n %1$d </string>
     <string name="Cashout"> CASHOUT: \n %1$d </string>
     <string name="Total"> Total: \n %1$d </string>
+    <string name="title_activity_player">PlayerActivity</string>
+    <string name="PlayerNameError">Player name cannot be blank </string>
+    <string name="AddedPlayer">Successfully added %1$s</string>
 </resources>

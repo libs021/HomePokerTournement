@@ -19,10 +19,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <provider
-            android:name="com.example.libbys.homepokertournement.DataBaseFiles.PokerProvider"
+            android:name=".DataBaseFiles.PokerProvider"
             android:authorities="com.example.libbys.homepokertournement"
             android:exported="false" />
+
+        <activity
+            android:name=".PlayerActivity"
+            android:label="@string/title_activity_player"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

@@ -38,7 +38,10 @@ public class PokerProvider extends ContentProvider {
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] strings, @Nullable String s, @Nullable String[] strings1, @Nullable String s1) {
         SQLiteDatabase database = db.getReadableDatabase();
-        return database.query(PlayerContract.PlayerEntry.TABLE_NAME, strings, s, strings1, null, null, null);
+        //Allows the cursor to be notified when the data changes, so it will refresh its data.
+        Cursor cursor = database.query(PlayerContract.PlayerEntry.TABLE_NAME, strings, s, strings1, null, null, null);
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return cursor;
     }
 
     @Nullable
@@ -52,6 +55,7 @@ public class PokerProvider extends ContentProvider {
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
         SQLiteDatabase database = db.getWritableDatabase();
         long rowID = database.insert(PlayerContract.PlayerEntry.TABLE_NAME, null, contentValues);
+        getContext().getContentResolver().notifyChange(uri, null);
         return ContentUris.withAppendedId(uri, rowID);
     }
 
