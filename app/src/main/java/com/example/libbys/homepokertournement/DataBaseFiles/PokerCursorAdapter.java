@@ -48,10 +48,10 @@ public class PokerCursorAdapter extends CursorAdapter {
         TextView CashOutTextView = view.findViewById(R.id.cashout);
         TextView TotalTextView = view.findViewById(R.id.totalwinnings);
 
-        String Name = cursor.getString(cursor.getColumnIndex(PlayerContract.PlayerEntry.NAME));
-        int Buyin = cursor.getInt(cursor.getColumnIndex(PlayerContract.PlayerEntry.BUYIN));
-        int CashOut = cursor.getInt(cursor.getColumnIndex(PlayerContract.PlayerEntry.CASHOUT));
-        int TotalWinnings = cursor.getInt(cursor.getColumnIndex(PlayerContract.PlayerEntry.WIN));
+        String Name = cursor.getString(cursor.getColumnIndex(PokerContract.PlayerEntry.NAME));
+        int Buyin = cursor.getInt(cursor.getColumnIndex(PokerContract.PlayerEntry.BUYIN));
+        int CashOut = cursor.getInt(cursor.getColumnIndex(PokerContract.PlayerEntry.CASHOUT));
+        int TotalWinnings = cursor.getInt(cursor.getColumnIndex(PokerContract.PlayerEntry.WIN));
         String toInsert;
         toInsert = String.format(context.getString(R.string.Buyin), Buyin);
         NameTextView.setText(Name);

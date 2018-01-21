@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.libbys.homepokertournement.DataBaseFiles.PlayerContract;
+import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
 
 public class PlayerActivity extends AppCompatActivity {
 
@@ -34,8 +34,8 @@ public class PlayerActivity extends AppCompatActivity {
             return;
         }
         ContentValues values = new ContentValues();
-        values.put(PlayerContract.PlayerEntry.NAME, name);
-        getContentResolver().insert(PlayerContract.PlayerEntry.CONTENT_URI, values);
+        values.put(PokerContract.PlayerEntry.NAME, name);
+        getContentResolver().insert(PokerContract.PlayerEntry.CONTENT_URI, values);
         Toast.makeText(this, getString(R.string.AddedPlayer, name), Toast.LENGTH_LONG).show();
         finish();
     }

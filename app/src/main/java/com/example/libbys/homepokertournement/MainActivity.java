@@ -16,7 +16,7 @@ import android.view.View;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 
-import com.example.libbys.homepokertournement.DataBaseFiles.PlayerContract;
+import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerCursorAdapter;
 import com.example.libbys.homepokertournement.DataBaseFiles.databaseHelper;
 
@@ -75,9 +75,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        String[] toSelect = {PlayerContract.PlayerEntry._ID, PlayerContract.PlayerEntry.NAME,
-                PlayerContract.PlayerEntry.BUYIN, PlayerContract.PlayerEntry.CASHOUT, PlayerContract.PlayerEntry.WIN};
-        return new android.support.v4.content.CursorLoader(this, PlayerContract.PlayerEntry.CONTENT_URI, toSelect, null, null, null);
+        String[] toSelect = {PokerContract.PlayerEntry._ID, PokerContract.PlayerEntry.NAME,
+                PokerContract.PlayerEntry.BUYIN, PokerContract.PlayerEntry.CASHOUT, PokerContract.PlayerEntry.WIN};
+        return new android.support.v4.content.CursorLoader(this, PokerContract.PlayerEntry.CONTENT_URI, toSelect, null, null, null);
     }
 
     /**
