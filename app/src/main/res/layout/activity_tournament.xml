@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/GameEditText"
+        style="@style/DefaultEditText"
+        android:hint="@string/Game"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/StartEditText"
+        style="@style/DefaultEditText"
+        android:hint="@string/Start"
+        android:inputType="datetime" />
+
+    <EditText
+        android:id="@+id/EndEditText"
+        style="@style/DefaultEditText"
+        android:hint="@string/End"
+        android:inputType="datetime" />
+
+    <EditText
+        android:id="@+id/NumberOfPlayersEditText"
+        style="@style/DefaultEditText"
+        android:hint="@string/NumberOfPlayers"
+        android:inputType="text" />
+
+    <Button
+        style="@style/DefaultButton"
+        android:text="@string/NewTournament" />
+
+</LinearLayout>
