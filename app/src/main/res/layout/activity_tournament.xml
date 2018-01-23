@@ -11,24 +11,25 @@
         android:inputType="text" />
 
     <EditText
-        android:id="@+id/StartEditText"
+        android:id="@+id/StartDate"
         style="@style/DefaultEditText"
-        android:hint="@string/Start"
+        android:hint="@string/StartDate"
         android:inputType="datetime" />
 
     <EditText
-        android:id="@+id/EndEditText"
+        android:id="@+id/StartTime"
         style="@style/DefaultEditText"
-        android:hint="@string/End"
+        android:hint="@string/StartTime"
         android:inputType="datetime" />
 
     <EditText
-        android:id="@+id/NumberOfPlayersEditText"
+        android:id="@+id/costEditText"
         style="@style/DefaultEditText"
-        android:hint="@string/NumberOfPlayers"
-        android:inputType="text" />
+        android:hint="@string/Cost"
+        android:inputType="number" />
 
     <Button
+        android:id="@+id/NewTournament"
         style="@style/DefaultButton"
         android:text="@string/NewTournament" />
 

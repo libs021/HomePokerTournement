@@ -33,7 +33,7 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
      *
      * @param id   The ID whose loader is to be created.
      * @param args Any arguments supplied by the caller.
-     * @return Return a new Loader instance that is ready to start loading.
+     * @return Return a new Loader instance that is ready to startDate loading.
      */
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

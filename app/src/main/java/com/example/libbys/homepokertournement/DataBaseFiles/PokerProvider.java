@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 /**
  * {@link ContentProvider} for PokerApp app.
@@ -19,11 +20,13 @@ public class PokerProvider extends ContentProvider {
     public static final String LOG_TAG = PokerProvider.class.getSimpleName();
     private static final int PLAYER = 100;
     private static final int PLAYER_ID = 101;
+    private static final int TOURNAMENT = 200;
     private static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
         sUriMatcher.addURI(PokerContract.CONTENT_AUTHORITY, PokerContract.PATH_PLAYERS, PLAYER);
-        sUriMatcher.addURI(PokerContract.CONTENT_AUTHORITY, PokerContract.PATH_PLAYERS + "/*", PLAYER_ID);
+        sUriMatcher.addURI(PokerContract.CONTENT_AUTHORITY, PokerContract.PATH_PLAYERS + "/#", PLAYER_ID);
+        sUriMatcher.addURI(PokerContract.CONTENT_AUTHORITY, PokerContract.PATH_TOURNAMENT, TOURNAMENT);
     }
 
     private databaseHelper db;
@@ -54,9 +57,17 @@ public class PokerProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
         SQLiteDatabase database = db.getWritableDatabase();
-        long rowID = database.insert(PokerContract.PlayerEntry.TABLE_NAME, null, contentValues);
-        getContext().getContentResolver().notifyChange(uri, null);
-        return ContentUris.withAppendedId(uri, rowID);
+        long rowID;
+        Log.e("PokerProvider", "insert: " + sUriMatcher.match(uri));
+        switch (sUriMatcher.match(uri)) {
+            case PLAYER:
+                rowID = database.insert(PokerContract.PlayerEntry.TABLE_NAME, null, contentValues);
+                return ContentUris.withAppendedId(uri, rowID);
+            case TOURNAMENT:
+                rowID = database.insert(PokerContract.TournamentEntry.TABLE_NAME, null, contentValues);
+                return ContentUris.withAppendedId(uri, rowID);
+        }
+        return ContentUris.withAppendedId(uri, -1);
     }
 
     @Override
