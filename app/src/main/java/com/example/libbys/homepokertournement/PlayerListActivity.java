@@ -1,14 +1,20 @@
 package com.example.libbys.homepokertournement;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerCursorAdapter;
@@ -17,6 +23,7 @@ import com.example.libbys.homepokertournement.DataBaseFiles.databaseHelper;
 public class PlayerListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     PokerCursorAdapter cursorAdapter = new PokerCursorAdapter(this, null, 0);
     databaseHelper helper = new databaseHelper(this);
+    Boolean[] isItemSelected;
 
 
     @Override
@@ -26,6 +33,21 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
         ListView listView = findViewById(R.id.PlayerListView);
         listView.setAdapter(cursorAdapter);
         getSupportLoaderManager().initLoader(0, null, this);
+        //If there is a URI in from the previous activity we are creating a new tournament and
+        // the use should be selecting the players to add to the tournament.
+        if (getIntent().getData() != null) {
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    if (!isItemSelected[i])
+                        view.setBackgroundColor(getColor(R.color.colorPrimaryDark));
+                    else view.setBackgroundColor(000000);
+                    isItemSelected[i] = !isItemSelected[i];
+                }
+            });
+            addFinalizeButton();
+
+        }
     }
 
     /**
@@ -83,7 +105,10 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         cursorAdapter.changeCursor(data);
-
+        isItemSelected = new Boolean[data.getCount()];
+        for (int i = 0; i < isItemSelected.length; i++) {
+            isItemSelected[i] = false;
+        }
     }
 
     /**
@@ -96,6 +121,35 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         cursorAdapter.changeCursor(null);
+        isItemSelected = null;
 
+    }
+
+    private void addFinalizeButton() {
+        Button finalizeButton = findViewById(R.id.createID);
+        finalizeButton.setVisibility(View.VISIBLE);
+        finalizeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri uri = getIntent().getData();
+                String ID = uri.getLastPathSegment();
+                int toID = Integer.parseInt(ID);
+                int numberOfPlayers = 0;
+                for (int i = 0; i < cursorAdapter.getCount(); i++) {
+                    ContentValues values = new ContentValues();
+                    if (isItemSelected[i] == true) {
+                        Cursor items = cursorAdapter.getCursor();
+                        items.moveToPosition(i);
+                        int playerID = items.getInt(items.getColumnIndex(PokerContract.PlayerEntry._ID));
+                        values.put(PokerContract.PlayerToTournament.TOURNAMENT, toID);
+                        values.put(PokerContract.PlayerToTournament.PLAYER, playerID);
+                        getContentResolver().insert(PokerContract.PlayerToTournament.CONTENT_URI, values);
+                        numberOfPlayers++;
+                    }
+                }
+                Toast.makeText(PlayerListActivity.this, "You inserted" + numberOfPlayers, Toast.LENGTH_LONG).show();
+                finish();
+            }
+        });
     }
 }

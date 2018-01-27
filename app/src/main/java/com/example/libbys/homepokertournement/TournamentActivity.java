@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -43,7 +44,7 @@ public class TournamentActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //creates a new Tournament with the selected Values
-                createNewTournement();
+                createNewTournament();
             }
         });
     }
@@ -103,7 +104,7 @@ public class TournamentActivity extends AppCompatActivity {
         mMinute = calendar.get(Calendar.MINUTE) + 10;
     }
 
-    private void createNewTournement() {
+    private void createNewTournament() {
         //Start by getting all of the information from the user Editable Fields.
         EditText gameEditText = findViewById(R.id.GameEditText);
         EditText costEditText = findViewById(R.id.costEditText);
@@ -117,14 +118,17 @@ public class TournamentActivity extends AppCompatActivity {
         String costString = costEditText.getText().toString().trim();
         int cost = Integer.parseInt(costString);
         String dateTime = date + " " + time;
-        ContentValues newTournement = new ContentValues();
-        newTournement.put(PokerContract.TournamentEntry.GAME, game);
-        newTournement.put(PokerContract.TournamentEntry.STARTTIME, dateTime);
-        newTournement.put(PokerContract.TournamentEntry.COST, cost);
+        ContentValues newTournament = new ContentValues();
+        newTournament.put(PokerContract.TournamentEntry.GAME, game);
+        newTournament.put(PokerContract.TournamentEntry.STARTTIME, dateTime);
+        newTournament.put(PokerContract.TournamentEntry.COST, cost);
         //Uri contentURI = contentURI.withAppendedPath(PokerContract.CONTENT_AUTHORITY, PokerContract.PATH_TOURNAMENT);
-        Uri uri = getContentResolver().insert(PokerContract.TournamentEntry.CONTENT_URI, newTournement);
+        Uri uri = getContentResolver().insert(PokerContract.TournamentEntry.CONTENT_URI, newTournament);
         String id = uri.getLastPathSegment();
         Toast.makeText(this, "Your entered in Tournament with ID " + id, Toast.LENGTH_LONG).show();
-
+        Intent intent = new Intent(TournamentActivity.this, PlayerListActivity.class);
+        intent.setData(uri);
+        startActivity(intent);
+        finish();
     }
 }

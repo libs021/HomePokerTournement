@@ -21,12 +21,14 @@ public class PokerProvider extends ContentProvider {
     private static final int PLAYER = 100;
     private static final int PLAYER_ID = 101;
     private static final int TOURNAMENT = 200;
+    private static final int PLAYERTOTOURNAMENT = 300;
     private static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
         sUriMatcher.addURI(PokerContract.CONTENT_AUTHORITY, PokerContract.PATH_PLAYERS, PLAYER);
         sUriMatcher.addURI(PokerContract.CONTENT_AUTHORITY, PokerContract.PATH_PLAYERS + "/#", PLAYER_ID);
         sUriMatcher.addURI(PokerContract.CONTENT_AUTHORITY, PokerContract.PATH_TOURNAMENT, TOURNAMENT);
+        sUriMatcher.addURI(PokerContract.CONTENT_AUTHORITY, PokerContract.PATH_PLAYERTOTOURNAMENT, PLAYERTOTOURNAMENT);
     }
 
     private databaseHelper db;
@@ -65,6 +67,9 @@ public class PokerProvider extends ContentProvider {
                 return ContentUris.withAppendedId(uri, rowID);
             case TOURNAMENT:
                 rowID = database.insert(PokerContract.TournamentEntry.TABLE_NAME, null, contentValues);
+                return ContentUris.withAppendedId(uri, rowID);
+            case PLAYERTOTOURNAMENT:
+                rowID = database.insert(PokerContract.PlayerToTournament.TABLE_NAME, null, contentValues);
                 return ContentUris.withAppendedId(uri, rowID);
         }
         return ContentUris.withAppendedId(uri, -1);
