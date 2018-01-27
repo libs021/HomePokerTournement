@@ -17,11 +17,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
-import com.example.libbys.homepokertournement.DataBaseFiles.PokerCursorAdapter;
+import com.example.libbys.homepokertournement.DataBaseFiles.PokerPlayerCursorAdapter;
 import com.example.libbys.homepokertournement.DataBaseFiles.databaseHelper;
 
 public class PlayerListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-    PokerCursorAdapter cursorAdapter = new PokerCursorAdapter(this, null, 0);
+    PokerPlayerCursorAdapter cursorAdapter = new PokerPlayerCursorAdapter(this, null, 0);
     databaseHelper helper = new databaseHelper(this);
     Boolean[] isItemSelected;
 

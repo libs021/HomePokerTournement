@@ -43,9 +43,18 @@ public class PokerProvider extends ContentProvider {
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] strings, @Nullable String s, @Nullable String[] strings1, @Nullable String s1) {
         SQLiteDatabase database = db.getReadableDatabase();
-        //Allows the cursor to be notified when the data changes, so it will refresh its data.
-        Cursor cursor = database.query(PokerContract.PlayerEntry.TABLE_NAME, strings, s, strings1, null, null, null);
-        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        Cursor cursor = null;
+        switch (sUriMatcher.match(uri)) {
+            case PLAYER:
+                //Allows the cursor to be notified when the data changes, so it will refresh its data.
+                cursor = database.query(PokerContract.PlayerEntry.TABLE_NAME, strings, s, strings1, null, null, null);
+                cursor.setNotificationUri(getContext().getContentResolver(), uri);
+                return cursor;
+            case TOURNAMENT:
+                cursor = database.query(PokerContract.TournamentEntry.TABLE_NAME, strings, s, strings1, null, null, s1);
+                cursor.setNotificationUri(getContext().getContentResolver(), uri);
+                return cursor;
+        }
         return cursor;
     }
 

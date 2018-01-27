@@ -14,9 +14,9 @@ import com.example.libbys.homepokertournement.R;
  * Created by Libby's on 1/19/2018.
  */
 
-public class PokerCursorAdapter extends CursorAdapter {
+public class PokerPlayerCursorAdapter extends CursorAdapter {
 
-    public PokerCursorAdapter(Context context, Cursor c, int flags) {
+    public PokerPlayerCursorAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
 

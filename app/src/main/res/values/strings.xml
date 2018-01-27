@@ -16,4 +16,10 @@
     <string name="StartTime">Start Time</string>
     <string name="NumberOfPlayers">Number of Players</string>
     <string name="Cost">Cost</string>
+    <string-array name="GameList">
+        <item> "Texas Hold em"</item>
+        <item> "Omaha</item>
+        <item> "7 Card Stud"</item>
+        <item> "5 Card Draw</item>
+    </string-array>
 </resources>

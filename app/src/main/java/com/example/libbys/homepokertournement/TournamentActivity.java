@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
@@ -55,7 +56,11 @@ public class TournamentActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                 month = month + 1;
-                editText.setText(year + "-" + month + "-" + day);
+                String stringMonth = String.valueOf(month);
+                if (stringMonth.length() == 1) stringMonth = "0" + stringMonth;
+                String stringDay = String.valueOf(day);
+                if (stringDay.length() == 1) stringDay = "0" + stringDay;
+                editText.setText(year + "-" + stringMonth + "-" + stringDay);
             }
         });
         final DatePickerDialog datePicker = new DatePickerDialog(this, DataListener, myear, mmonth, mday);
@@ -77,7 +82,11 @@ public class TournamentActivity extends AppCompatActivity {
 
             @Override
             public void onTimeSet(android.widget.TimePicker timePicker, int hour, int minute) {
-                editText.setText(hour + ":" + minute + ":00");
+                String stringMinute = String.valueOf(minute);
+                if (stringMinute.length() == 1) stringMinute = "0" + stringMinute;
+                String stringHour = String.valueOf(hour);
+                if (stringHour.length() == 1) stringHour = "0" + stringHour;
+                editText.setText(hour + ":" + stringMinute + ":00");
 
             }
         });
@@ -106,13 +115,13 @@ public class TournamentActivity extends AppCompatActivity {
 
     private void createNewTournament() {
         //Start by getting all of the information from the user Editable Fields.
-        EditText gameEditText = findViewById(R.id.GameEditText);
+        Spinner gameEditText = findViewById(R.id.GameEditText);
         EditText costEditText = findViewById(R.id.costEditText);
         EditText startDate = findViewById(R.id.StartDate);
         EditText startTime = findViewById(R.id.StartTime);
 
 
-        String game = gameEditText.getText().toString().trim();
+        String game = (String) gameEditText.getSelectedItem();
         String date = startDate.getText().toString().trim();
         String time = startTime.getText().toString().trim();
         String costString = costEditText.getText().toString().trim();

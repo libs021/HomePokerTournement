@@ -4,11 +4,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <EditText
+    <Spinner
         android:id="@+id/GameEditText"
-        style="@style/DefaultEditText"
-        android:hint="@string/Game"
-        android:inputType="text" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/GameList"
+        android:prompt="@string/Game" />
 
     <EditText
         android:id="@+id/StartDate"
