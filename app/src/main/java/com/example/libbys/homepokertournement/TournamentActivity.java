@@ -71,8 +71,6 @@ public class TournamentActivity extends AppCompatActivity {
                 datePicker.show();
                 return true;
             }
-
-
         });
 
     }
@@ -86,7 +84,7 @@ public class TournamentActivity extends AppCompatActivity {
                 if (stringMinute.length() == 1) stringMinute = "0" + stringMinute;
                 String stringHour = String.valueOf(hour);
                 if (stringHour.length() == 1) stringHour = "0" + stringHour;
-                editText.setText(hour + ":" + stringMinute + ":00");
+                editText.setText(stringHour + ":" + stringMinute + ":00");
 
             }
         });
@@ -131,13 +129,17 @@ public class TournamentActivity extends AppCompatActivity {
         newTournament.put(PokerContract.TournamentEntry.GAME, game);
         newTournament.put(PokerContract.TournamentEntry.STARTTIME, dateTime);
         newTournament.put(PokerContract.TournamentEntry.COST, cost);
-        //Uri contentURI = contentURI.withAppendedPath(PokerContract.CONTENT_AUTHORITY, PokerContract.PATH_TOURNAMENT);
         Uri uri = getContentResolver().insert(PokerContract.TournamentEntry.CONTENT_URI, newTournament);
         String id = uri.getLastPathSegment();
-        Toast.makeText(this, "Your entered in Tournament with ID " + id, Toast.LENGTH_LONG).show();
-        Intent intent = new Intent(TournamentActivity.this, PlayerListActivity.class);
-        intent.setData(uri);
-        startActivity(intent);
-        finish();
+        if (!id.equals("-1")) {
+            Toast.makeText(this, "Your entered in Tournament with ID " + id, Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(TournamentActivity.this, PlayerListActivity.class);
+            intent.setData(uri);
+            startActivity(intent);
+            finish();
+        } else {
+            Toast.makeText(this, "Tournament must start on a future date", Toast.LENGTH_LONG).show();
+
+        }
     }
 }

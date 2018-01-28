@@ -135,8 +135,8 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
                 String ID = uri.getLastPathSegment();
                 int toID = Integer.parseInt(ID);
                 int numberOfPlayers = 0;
+                ContentValues values = new ContentValues();
                 for (int i = 0; i < cursorAdapter.getCount(); i++) {
-                    ContentValues values = new ContentValues();
                     if (isItemSelected[i] == true) {
                         Cursor items = cursorAdapter.getCursor();
                         items.moveToPosition(i);
@@ -144,9 +144,13 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
                         values.put(PokerContract.PlayerToTournament.TOURNAMENT, toID);
                         values.put(PokerContract.PlayerToTournament.PLAYER, playerID);
                         getContentResolver().insert(PokerContract.PlayerToTournament.CONTENT_URI, values);
+                        values.clear();
                         numberOfPlayers++;
                     }
                 }
+                values.put(PokerContract.TournamentEntry.NUMPLAYERS, numberOfPlayers);
+                String[] idToUpdate = {ID};
+                getContentResolver().update(uri, values, PokerContract.TournamentEntry._ID, idToUpdate);
                 Toast.makeText(PlayerListActivity.this, "You inserted" + numberOfPlayers, Toast.LENGTH_LONG).show();
                 finish();
             }
