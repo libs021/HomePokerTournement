@@ -1,7 +1,6 @@
 package com.example.libbys.homepokertournement;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.CursorLoader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -18,11 +17,9 @@ import android.widget.Toast;
 
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerPlayerCursorAdapter;
-import com.example.libbys.homepokertournement.DataBaseFiles.databaseHelper;
 
 public class PlayerListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     PokerPlayerCursorAdapter cursorAdapter = new PokerPlayerCursorAdapter(this, null, 0);
-    databaseHelper helper = new databaseHelper(this);
     Boolean[] isItemSelected;
 
 
@@ -41,7 +38,7 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     if (!isItemSelected[i])
                         view.setBackgroundColor(getColor(R.color.colorPrimaryDark));
-                    else view.setBackgroundColor(000000);
+                    else view.setBackgroundColor(0x00000);
                     isItemSelected[i] = !isItemSelected[i];
                 }
             });
@@ -68,8 +65,7 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
      * Called when a previously created loader has finished its load.  Note
      * that normally an application is <em>not</em> allowed to commit fragment
      * transactions while in this call, since it can happen after an
-     * activity's state is saved.  See {@link FragmentManager#beginTransaction()
-     * FragmentManager.openTransaction()} for further discussion on this.
+     * activity's state is saved
      * <p>
      * <p>This function is guaranteed to be called prior to the release of
      * the last data that was supplied for this Loader.  At this point
@@ -79,17 +75,7 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
      * management of its data so you don't have to.  In particular:
      * <p>
      * <ul>
-     * <li> <p>The Loader will monitor for changes to the data, and report
-     * them to you through new calls here.  You should not monitor the
-     * data yourself.  For example, if the data is a {@link Cursor}
-     * and you place it in a {@link CursorAdapter}, use
-     * the {@link CursorAdapter#CursorAdapter(Context, * Cursor, int)} constructor <em>without</em> passing
-     * in either {@link CursorAdapter#FLAG_AUTO_REQUERY}
-     * or {@link CursorAdapter#FLAG_REGISTER_CONTENT_OBSERVER}
-     * (that is, use 0 for the flags argument).  This prevents the CursorAdapter
-     * from doing its own observing of the Cursor, which is not needed since
-     * when a change happens you will get a new Cursor throw another call
-     * here.
+
      * <li> The Loader will release the data once it knows the application
      * is no longer using it.  For example, if the data is
      * a {@link Cursor} from a {@link CursorLoader},
@@ -137,7 +123,7 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
                 int numberOfPlayers = 0;
                 ContentValues values = new ContentValues();
                 for (int i = 0; i < cursorAdapter.getCount(); i++) {
-                    if (isItemSelected[i] == true) {
+                    if (isItemSelected[i]) {
                         Cursor items = cursorAdapter.getCursor();
                         items.moveToPosition(i);
                         int playerID = items.getInt(items.getColumnIndex(PokerContract.PlayerEntry._ID));

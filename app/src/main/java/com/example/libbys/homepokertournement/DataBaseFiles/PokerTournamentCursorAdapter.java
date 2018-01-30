@@ -1,8 +1,7 @@
 package com.example.libbys.homepokertournement.DataBaseFiles;
 
-import android.app.LoaderManager;
+
 import android.content.Context;
-import android.content.CursorLoader;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
@@ -13,39 +12,10 @@ import android.widget.TextView;
 import com.example.libbys.homepokertournement.R;
 
 /**
- * Created by Libby's on 1/27/2018.
+ * Manages the Poker Tournament List view.
  */
 
 public class PokerTournamentCursorAdapter extends CursorAdapter {
-    /**
-     * Constructor that always enables auto-requery.
-     *
-     * @param context The context
-     * @param c       The cursor from which to get the data.
-     * @deprecated This option is discouraged, as it results in Cursor queries
-     * being performed on the application's UI thread and thus can cause poor
-     * responsiveness or even Application Not Responding errors.  As an alternative,
-     * use {@link LoaderManager} with a {@link CursorLoader}.
-     */
-    public PokerTournamentCursorAdapter(Context context, Cursor c) {
-        super(context, c);
-    }
-
-    /**
-     * Constructor that allows control over auto-requery.  It is recommended
-     * you not use this, but instead {@link #CursorAdapter(Context, Cursor, int)}.
-     * When using this constructor, {@link #FLAG_REGISTER_CONTENT_OBSERVER}
-     * will always be set.
-     *
-     * @param context     The context
-     * @param c           The cursor from which to get the data.
-     * @param autoRequery If true the adapter will call requery() on the
-     *                    cursor whenever it changes so the most recent
-     */
-    public PokerTournamentCursorAdapter(Context context, Cursor c, boolean autoRequery) {
-        super(context, c, autoRequery);
-    }
-
     /**
      * Recommended constructor.
      *

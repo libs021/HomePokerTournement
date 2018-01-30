@@ -5,8 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class databaseHelper extends SQLiteOpenHelper {
-    public static final String DATABASE_NAME = "Poker.db";
-    public static final int DATABASE_VERSION = 2;
+    private static final String DATABASE_NAME = "Poker.db";
+    private static final int DATABASE_VERSION = 2;
     private static final String CREATE_PLAYERTABLE = "Create Table " + PokerContract.PlayerEntry.TABLE_NAME + " ( " +
             PokerContract.PlayerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             PokerContract.PlayerEntry.NAME + " TEXT NOT NULL, " +

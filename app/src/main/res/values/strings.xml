@@ -16,6 +16,7 @@
     <string name="StartTime">Start Time</string>
     <string name="NumberOfPlayers">Number of Players</string>
     <string name="Cost">Cost</string>
+    <string name="Title_tournamentprogress">Tournament in Progress</string>
     <string-array name="GameList">
         <item> "Texas Hold em"</item>
         <item> "Omaha</item>

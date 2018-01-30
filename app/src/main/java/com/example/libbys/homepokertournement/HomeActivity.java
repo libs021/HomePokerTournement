@@ -10,6 +10,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -17,7 +18,7 @@ import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerTournamentCursorAdapter;
 
 /**
- * Created by Libby's on 1/21/2018.
+ * Home Screen for the App, Loads some buttons, as well as lists the most upcoming tournaments.
  */
 
 public class HomeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -27,7 +28,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_activity);
-        cursorAdapter = new PokerTournamentCursorAdapter(this, null, false);
+        cursorAdapter = new PokerTournamentCursorAdapter(this, null, 0);
         Button addPlayerButton = findViewById(R.id.AddPlayer);
         Button viewPlayerButton = findViewById(R.id.ViewPlayer);
         Button createTournamentButton = findViewById(R.id.NewTournament);
@@ -59,6 +60,13 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         ListView listView = findViewById(R.id.tournamentListView);
         listView.setAdapter(cursorAdapter);
         getSupportLoaderManager().initLoader(1, null, this);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(HomeActivity.this, TournamentProgress.class);
+                startActivity(intent);
+            }
+        });
 
 
     }

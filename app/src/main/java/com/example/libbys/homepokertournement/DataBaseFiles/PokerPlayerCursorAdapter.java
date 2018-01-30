@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.example.libbys.homepokertournement.R;
 
 /**
- * Created by Libby's on 1/19/2018.
+ * CursorAdapter for populating the ListView of player information.
  */
 
 public class PokerPlayerCursorAdapter extends CursorAdapter {
