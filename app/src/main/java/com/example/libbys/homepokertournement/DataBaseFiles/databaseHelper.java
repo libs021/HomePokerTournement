@@ -4,7 +4,11 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 public class databaseHelper extends SQLiteOpenHelper {
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
     private static final String DATABASE_NAME = "Poker.db";
     private static final int DATABASE_VERSION = 2;
     private static final String CREATE_PLAYERTABLE = "Create Table " + PokerContract.PlayerEntry.TABLE_NAME + " ( " +

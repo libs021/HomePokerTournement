@@ -21,12 +21,6 @@ public class TournamentProgress extends AppCompatActivity {
         setContentView(R.layout.activity_tournamentprogress);
         ListView listView = findViewById(R.id.inTournament);
         ArrayList<TournamentPlayer> players = new ArrayList<>();
-        players.add(new TournamentPlayer("Joel", 1500));
-        players.add(new TournamentPlayer("Josh", 1500));
-        players.add(new TournamentPlayer("Jason", 1500));
-        players.add(new TournamentPlayer("Laurin", 1500));
-        players.add(new TournamentPlayer("Nick", 1500));
-        players.add(new TournamentPlayer("Robert", 1500));
         TournamentPlayerAdapter adapter = new TournamentPlayerAdapter(this, R.layout.playerintournamentlistview, players);
         listView.setAdapter(adapter);
     }

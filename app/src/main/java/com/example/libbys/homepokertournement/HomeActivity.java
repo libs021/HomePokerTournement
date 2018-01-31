@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -16,6 +15,10 @@ import android.widget.ListView;
 
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerTournamentCursorAdapter;
+import com.example.libbys.homepokertournement.DataBaseFiles.databaseHelper;
+
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Home Screen for the App, Loads some buttons, as well as lists the most upcoming tournaments.
@@ -59,7 +62,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         });
         ListView listView = findViewById(R.id.tournamentListView);
         listView.setAdapter(cursorAdapter);
-        getSupportLoaderManager().initLoader(1, null, this);
+        getSupportLoaderManager().initLoader(0, null, HomeActivity.this);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -75,16 +78,21 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         String[] toSelect = {PokerContract.TournamentEntry._ID, PokerContract.TournamentEntry.GAME,
                 PokerContract.TournamentEntry.COST, PokerContract.TournamentEntry.NUMPLAYERS, PokerContract.TournamentEntry.STARTTIME};
-        return new CursorLoader(this, PokerContract.TournamentEntry.CONTENT_URI, toSelect, null, null, PokerContract.TournamentEntry.STARTTIME);
+        Calendar c = Calendar.getInstance();
+        Date today = c.getTime();
+        String time = databaseHelper.DATE_FORMAT.format(today);
+        String[] selectionArgs = {time};
+        return new android.support.v4.content.CursorLoader(this, PokerContract.TournamentEntry.CONTENT_URI, toSelect, PokerContract.TournamentEntry.STARTTIME,
+                selectionArgs, PokerContract.TournamentEntry.STARTTIME);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        cursorAdapter.changeCursor(cursor);
+        cursorAdapter.swapCursor(cursor);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        cursorAdapter.changeCursor(null);
+        cursorAdapter.swapCursor(null);
     }
 }

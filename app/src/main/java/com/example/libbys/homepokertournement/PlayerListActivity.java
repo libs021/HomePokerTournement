@@ -29,7 +29,7 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
         setContentView(R.layout.activity_playerlist);
         ListView listView = findViewById(R.id.PlayerListView);
         listView.setAdapter(cursorAdapter);
-        getSupportLoaderManager().initLoader(0, null, this);
+        getSupportLoaderManager().initLoader(7, null, PlayerListActivity.this);
         //If there is a URI in from the previous activity we are creating a new tournament and
         // the use should be selecting the players to add to the tournament.
         if (getIntent().getData() != null) {
@@ -90,7 +90,7 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        cursorAdapter.changeCursor(data);
+        cursorAdapter.swapCursor(data);
         isItemSelected = new Boolean[data.getCount()];
         for (int i = 0; i < isItemSelected.length; i++) {
             isItemSelected[i] = false;
@@ -106,7 +106,7 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
      */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        cursorAdapter.changeCursor(null);
+        cursorAdapter.swapCursor(null);
         isItemSelected = null;
 
     }

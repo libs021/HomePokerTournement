@@ -131,6 +131,7 @@ public class TournamentActivity extends AppCompatActivity {
         newTournament.put(PokerContract.TournamentEntry.COST, cost);
         Uri uri = getContentResolver().insert(PokerContract.TournamentEntry.CONTENT_URI, newTournament);
         String id = uri.getLastPathSegment();
+        finish();
         if (!id.equals("-1")) {
             Toast.makeText(this, "Your entered in Tournament with ID " + id, Toast.LENGTH_LONG).show();
             Intent intent = new Intent(TournamentActivity.this, PlayerListActivity.class);
