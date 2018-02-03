@@ -9,6 +9,7 @@ public final class PokerContract {
     public static final String PATH_PLAYERS = "Players";
     public static final String PATH_TOURNAMENT = "Tournaments";
     public static final String PATH_PLAYERTOTOURNAMENT = "PlayertoTournament";
+    public static final String PATH_GETPLAYERBYTOURNAMENTID = "PlayerBytournament";
 
     //class never needs to instantiated as it only holds constants
     private PokerContract() {
@@ -18,6 +19,7 @@ public final class PokerContract {
 
         public static final String TABLE_NAME = "Players";
         public static final String _ID = BaseColumns._ID;
+
 
         //columns of the player table
         //Represents the name of the player
@@ -55,6 +57,8 @@ public final class PokerContract {
         public static final String NUMPLAYERS = "Players";
         // represents the cost of the Tournament
         public static final String COST = "Costs";
+        // Represents the starting Chip Count of the tournament
+        public static final String STARTINGCHIPS = "StartingChips";
 
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, TABLE_NAME);
         public static final String CONTENT_ITEM_TYPE = "vnd.android.cursor.item/tournament";

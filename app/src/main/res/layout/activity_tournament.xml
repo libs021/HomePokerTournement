@@ -29,6 +29,12 @@
         android:hint="@string/Cost"
         android:inputType="number" />
 
+    <EditText
+        android:id="@+id/startingChips"
+        style="@style/DefaultEditText"
+        android:hint="Starting Chips"
+        android:inputType="number" />
+
     <Button
         android:id="@+id/NewTournament"
         style="@style/DefaultButton"

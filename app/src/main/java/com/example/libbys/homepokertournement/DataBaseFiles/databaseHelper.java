@@ -10,7 +10,7 @@ import java.util.Locale;
 public class databaseHelper extends SQLiteOpenHelper {
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
     private static final String DATABASE_NAME = "Poker.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String CREATE_PLAYERTABLE = "Create Table " + PokerContract.PlayerEntry.TABLE_NAME + " ( " +
             PokerContract.PlayerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             PokerContract.PlayerEntry.NAME + " TEXT NOT NULL, " +
@@ -23,7 +23,9 @@ public class databaseHelper extends SQLiteOpenHelper {
             PokerContract.TournamentEntry.ENDTIME + " DATETIME, " +
             PokerContract.TournamentEntry.GAME + " TEXT NOT NULL, " +
             PokerContract.TournamentEntry.NUMPLAYERS + " INTEGER DEFAULT 0, " +
-            PokerContract.TournamentEntry.COST + " INTEGER NOT NULL);";
+            PokerContract.TournamentEntry.COST + " INTEGER NOT NULL, " +
+            PokerContract.TournamentEntry.STARTINGCHIPS + " INTEGER DEFAULT 1500);";
+
 
     private static final String CREATE_PLAYERTOTOURNAMENT = "Create Table " + PokerContract.PlayerToTournament.TABLE_NAME + " ( " +
             PokerContract.PlayerToTournament._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +

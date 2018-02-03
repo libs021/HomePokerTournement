@@ -28,6 +28,7 @@ public class PokerProvider extends ContentProvider {
     private static final int TOURNAMENT = 200;
     private static final int TOURNAMENT_ID = 201;
     private static final int PLAYERTOTOURNAMENT = 300;
+    private static final int PLAYERBYTOURNAMENTID = 550;
     private static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
@@ -36,6 +37,7 @@ public class PokerProvider extends ContentProvider {
         sUriMatcher.addURI(PokerContract.CONTENT_AUTHORITY, PokerContract.PATH_TOURNAMENT, TOURNAMENT);
         sUriMatcher.addURI(PokerContract.CONTENT_AUTHORITY, PokerContract.PATH_TOURNAMENT + "/#", TOURNAMENT_ID);
         sUriMatcher.addURI(PokerContract.CONTENT_AUTHORITY, PokerContract.PATH_PLAYERTOTOURNAMENT, PLAYERTOTOURNAMENT);
+        sUriMatcher.addURI(PokerContract.CONTENT_AUTHORITY, PokerContract.PATH_GETPLAYERBYTOURNAMENTID + "/#", PLAYERBYTOURNAMENTID);
     }
 
     private databaseHelper db;
@@ -59,9 +61,16 @@ public class PokerProvider extends ContentProvider {
                 return cursor;
             case TOURNAMENT:
                 selection = selection + "> ? ";
-                Log.e(TAG, "query: " + args[0]);
                 cursor = database.query(PokerContract.TournamentEntry.TABLE_NAME, toSelect, selection, args, null, null, sort);
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
+                return cursor;
+            case PLAYERBYTOURNAMENTID:
+                String query = "Select " + PokerContract.PlayerEntry.NAME + " from " + PokerContract.PlayerEntry.TABLE_NAME + " Left join " + PokerContract.PlayerToTournament.TABLE_NAME +
+                        " on " + PokerContract.PlayerEntry.TABLE_NAME + "." + PokerContract.PlayerEntry._ID +
+                        " = " + PokerContract.PlayerToTournament.PLAYER + "  where " + PokerContract.PlayerToTournament.TABLE_NAME +
+                        "." + PokerContract.PlayerToTournament.TOURNAMENT + " = ? ";
+                cursor = database.rawQuery(query, args);
+                Log.e(TAG, "query: " + cursor.getCount());
                 return cursor;
         }
         return cursor;

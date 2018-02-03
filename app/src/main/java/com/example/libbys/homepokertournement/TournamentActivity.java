@@ -117,18 +117,31 @@ public class TournamentActivity extends AppCompatActivity {
         EditText costEditText = findViewById(R.id.costEditText);
         EditText startDate = findViewById(R.id.StartDate);
         EditText startTime = findViewById(R.id.StartTime);
+        EditText startingChips = findViewById(R.id.startingChips);
 
 
         String game = (String) gameEditText.getSelectedItem();
         String date = startDate.getText().toString().trim();
         String time = startTime.getText().toString().trim();
         String costString = costEditText.getText().toString().trim();
-        int cost = Integer.parseInt(costString);
-        String dateTime = date + " " + time;
+        String startingChipsString = startingChips.getText().toString().trim();
         ContentValues newTournament = new ContentValues();
+
+
+        //No need to enter anything if the user doesn't put anything here, the database is set up to insert a defualt value if no value is present.
+        if (startingChipsString.length() != 0) {
+            int chips = Integer.parseInt(startingChipsString);
+            newTournament.put(PokerContract.TournamentEntry.STARTINGCHIPS, chips);
+        }
+        if (startDate.length() == 0 || startTime.length() == 0 || costString.length() == 0) {
+            Toast.makeText(this, "Start Date, Start time, and Cost are required", Toast.LENGTH_LONG).show();
+            return;
+        }
+        String dateTime = date + " " + time;
         newTournament.put(PokerContract.TournamentEntry.GAME, game);
         newTournament.put(PokerContract.TournamentEntry.STARTTIME, dateTime);
-        newTournament.put(PokerContract.TournamentEntry.COST, cost);
+        newTournament.put(PokerContract.TournamentEntry.COST, costString);
+
         Uri uri = getContentResolver().insert(PokerContract.TournamentEntry.CONTENT_URI, newTournament);
         String id = uri.getLastPathSegment();
         finish();
