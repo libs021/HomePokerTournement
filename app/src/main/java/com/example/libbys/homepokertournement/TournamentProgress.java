@@ -5,14 +5,17 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.libbys.homepokertournement.ArrayAdapters.TournamentPlayerAdapter;
 import com.example.libbys.homepokertournement.CustomPokerClasses.TournamentPlayer;
+import com.example.libbys.homepokertournement.CustomPokerClasses.TournamentPlayerDialog;
 import com.example.libbys.homepokertournement.CustomPokerClasses.TournamentTimer;
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
 
@@ -22,8 +25,9 @@ import java.util.ArrayList;
  * Created by Libby's on 1/29/2018.
  */
 
-public class TournamentProgress extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class TournamentProgress extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, TournamentPlayerDialog.TournamentPlayerInterface {
     ArrayList<TournamentPlayer> players = new ArrayList<>();
+    TournamentPlayerAdapter adapter;
 
 
     @Override
@@ -31,12 +35,23 @@ public class TournamentProgress extends AppCompatActivity implements LoaderManag
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tournamentprogress);
         ListView listView = findViewById(R.id.inTournament);
-        TournamentPlayerAdapter adapter = new TournamentPlayerAdapter(this, R.layout.playerintournamentlistview, players);
+        adapter = new TournamentPlayerAdapter(this, R.layout.playerintournamentlistview, players);
         listView.setAdapter(adapter);
         View rootView = findViewById(R.id.tournamentInProgressRootView);
         getSupportLoaderManager().initLoader(9, null, TournamentProgress.this);
         TournamentTimer timer = new TournamentTimer(this, 15000, 1, 20, rootView);
         timer.start();
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                FragmentManager manager = getSupportFragmentManager();
+                TournamentPlayerDialog dialog = new TournamentPlayerDialog();
+                Bundle args = new Bundle();
+                args.putInt("PlayerToUpdate", i);
+                dialog.setArguments(args);
+                dialog.show(manager, "ThisDialog");
+            }
+        });
 
     }
 
@@ -66,6 +81,20 @@ public class TournamentProgress extends AppCompatActivity implements LoaderManag
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+
+    }
+
+    @Override
+    public void bust(int playerPosition) {
+        players.get(playerPosition).setmChipCount(0);
+        adapter.notifyDataSetChanged();
+
+    }
+
+    @Override
+    public void updatePlayer(int playerPosition, int count) {
+        players.get(playerPosition).setmChipCount(count);
+        adapter.notifyDataSetChanged();
 
     }
 }

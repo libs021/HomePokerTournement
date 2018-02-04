@@ -38,7 +38,7 @@ public class TournamentTimer extends CountDownTimer {
         long minutesLeft = millisUntilFinished / 60000;
         long secondsLeft = (millisUntilFinished % 60000) / 1000;
         String timeLeft;
-        if (secondsLeft > 10)
+        if (secondsLeft >= 10)
             timeLeft = mContext.getString(R.string.TimeLeft, minutesLeft, secondsLeft);
         else timeLeft = mContext.getString(R.string.TimeLeftWithPadding, minutesLeft, secondsLeft);
         mTimeTextView.setText(timeLeft);
