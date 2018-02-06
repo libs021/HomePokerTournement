@@ -30,6 +30,12 @@ public class TournamentTimer extends CountDownTimer {
         mBlindsTextView = rootView.findViewById(R.id.blinds);
         mTimeTextView = rootView.findViewById(R.id.timer);
         mRoundTextView = rootView.findViewById(R.id.roundTracker);
+        mTimeTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                start();
+            }
+        });
     }
 
 

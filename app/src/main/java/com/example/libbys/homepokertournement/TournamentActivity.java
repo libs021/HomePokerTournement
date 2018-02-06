@@ -18,8 +18,10 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
+import com.example.libbys.homepokertournement.DataBaseFiles.databaseHelper;
 
 import java.util.Calendar;
+import java.util.Date;
 
 
 public class TournamentActivity extends AppCompatActivity {
@@ -135,16 +137,15 @@ public class TournamentActivity extends AppCompatActivity {
         }
         if (startDate.length() == 0 || startTime.length() == 0 || costString.length() == 0) {
             Toast.makeText(this, "Start Date, Start time, and Cost are required", Toast.LENGTH_LONG).show();
-            return;
         }
         String dateTime = date + " " + time;
         newTournament.put(PokerContract.TournamentEntry.GAME, game);
         newTournament.put(PokerContract.TournamentEntry.STARTTIME, dateTime);
         newTournament.put(PokerContract.TournamentEntry.COST, costString);
-
+        if (!verifyData(newTournament))
+            Toast.makeText(this, "Error Creating Tournament", Toast.LENGTH_LONG).show();
         Uri uri = getContentResolver().insert(PokerContract.TournamentEntry.CONTENT_URI, newTournament);
         String id = uri.getLastPathSegment();
-        finish();
         if (!id.equals("-1")) {
             Toast.makeText(this, "Your entered in Tournament with ID " + id, Toast.LENGTH_LONG).show();
             Intent intent = new Intent(TournamentActivity.this, PlayerListActivity.class);
@@ -152,8 +153,23 @@ public class TournamentActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         } else {
-            Toast.makeText(this, "Tournament must start on a future date", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Error Creating Tournament", Toast.LENGTH_LONG).show();
 
         }
     }
+
+    private boolean verifyData(ContentValues values) {
+        String time = values.getAsString(PokerContract.TournamentEntry.STARTTIME);
+        Calendar c = Calendar.getInstance();
+        Date today = c.getTime();
+        try {
+            Date d = databaseHelper.DATE_FORMAT.parse(time);
+            if (d.after(today)) return true;
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+
+        }
+        return false;
+    }
+
 }

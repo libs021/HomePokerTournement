@@ -20,15 +20,19 @@ import com.example.libbys.homepokertournement.CustomPokerClasses.TournamentTimer
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
- * Created by Libby's on 1/29/2018.
+ Activity to manage and display information related to the current Tournament that is in progress.
+ Includes a time and creates an array of players to manage the tournament
  */
 
 public class TournamentProgress extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, TournamentPlayerDialog.TournamentPlayerInterface {
+    private static final int GETPLAYERLOADER = 10;
+    private static final int GETSTARTINGCHIPCOUNTLOADER = 17;
     ArrayList<TournamentPlayer> players = new ArrayList<>();
     TournamentPlayerAdapter adapter;
-
+    TournamentTimer timer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,9 +42,8 @@ public class TournamentProgress extends AppCompatActivity implements LoaderManag
         adapter = new TournamentPlayerAdapter(this, R.layout.playerintournamentlistview, players);
         listView.setAdapter(adapter);
         View rootView = findViewById(R.id.tournamentInProgressRootView);
-        getSupportLoaderManager().initLoader(9, null, TournamentProgress.this);
-        TournamentTimer timer = new TournamentTimer(this, 15000, 1, 20, rootView);
-        timer.start();
+        getSupportLoaderManager().initLoader(GETPLAYERLOADER, null, TournamentProgress.this);
+        timer = new TournamentTimer(this, 15000, 1, 20, rootView);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -68,15 +71,20 @@ public class TournamentProgress extends AppCompatActivity implements LoaderManag
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        if (cursor.moveToFirst()) {
-            do {
-                TournamentPlayer playerToAdd = new TournamentPlayer(cursor.getString(cursor.getColumnIndex(PokerContract.PlayerEntry.NAME)), 1500);
-                players.add(playerToAdd);
+        loader.getId();
+        switch (loader.getId()) {
+            case GETPLAYERLOADER:
+                if (cursor.moveToFirst()) {
+                    do {
+                        TournamentPlayer playerToAdd = new TournamentPlayer(cursor.getString(cursor.getColumnIndex(PokerContract.PlayerEntry.NAME)), 1500);
+                        players.add(playerToAdd);
 
 
-            } while (cursor.moveToNext());
+                    } while (cursor.moveToNext());
+                }
+            case GETSTARTINGCHIPCOUNTLOADER:
+                //TODO
         }
-
     }
 
     @Override
@@ -87,6 +95,7 @@ public class TournamentProgress extends AppCompatActivity implements LoaderManag
     @Override
     public void bust(int playerPosition) {
         players.get(playerPosition).setmChipCount(0);
+        Collections.sort(players);
         adapter.notifyDataSetChanged();
 
     }
@@ -94,6 +103,7 @@ public class TournamentProgress extends AppCompatActivity implements LoaderManag
     @Override
     public void updatePlayer(int playerPosition, int count) {
         players.get(playerPosition).setmChipCount(count);
+        Collections.sort(players);
         adapter.notifyDataSetChanged();
 
     }

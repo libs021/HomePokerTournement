@@ -11,9 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import static android.content.ContentValues.TAG;
 
 /**
@@ -93,7 +90,6 @@ public class PokerProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(uri, null);
                 return ContentUris.withAppendedId(uri, rowID);
             case TOURNAMENT:
-                if (!verifyDate(contentValues)) return ContentUris.withAppendedId(uri, -1);
                 rowID = database.insert(PokerContract.TournamentEntry.TABLE_NAME, null, contentValues);
                 getContext().getContentResolver().notifyChange(uri, null);
                 return ContentUris.withAppendedId(uri, rowID);
@@ -123,18 +119,5 @@ public class PokerProvider extends ContentProvider {
         }
     }
 
-    private boolean verifyDate(ContentValues values) {
-        String time = values.getAsString(PokerContract.TournamentEntry.STARTTIME);
-        Calendar c = Calendar.getInstance();
-        Date today = c.getTime();
-        try {
-            Date d = databaseHelper.DATE_FORMAT.parse(time);
-            if (d.after(today)) return true;
-        } catch (java.text.ParseException e) {
-            e.printStackTrace();
-
-        }
-        return false;
-    }
 
 }
