@@ -69,7 +69,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(HomeActivity.this, TournamentProgress.class);
+                Intent intent = new Intent(HomeActivity.this, TournamentPreview.class);
                 Uri uri = ContentUris.withAppendedId(PokerContract.TournamentEntry.CONTENT_URI, l);
                 intent.setData(uri);
                 startActivity(intent);

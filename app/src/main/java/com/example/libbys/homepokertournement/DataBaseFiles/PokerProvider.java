@@ -9,9 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * {@link ContentProvider} for PokerApp app.
@@ -67,7 +64,7 @@ public class PokerProvider extends ContentProvider {
                         " = " + PokerContract.PlayerToTournament.PLAYER + "  where " + PokerContract.PlayerToTournament.TABLE_NAME +
                         "." + PokerContract.PlayerToTournament.TOURNAMENT + " = ? ";
                 cursor = database.rawQuery(query, args);
-                Log.e(TAG, "query: " + cursor.getCount());
+                cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
         }
         return cursor;
@@ -95,6 +92,8 @@ public class PokerProvider extends ContentProvider {
                 return ContentUris.withAppendedId(uri, rowID);
             case PLAYERTOTOURNAMENT:
                 rowID = database.insert(PokerContract.PlayerToTournament.TABLE_NAME, null, contentValues);
+                uri = Uri.withAppendedPath(PokerContract.BASE_CONTENT_URI, PokerContract.PATH_GETPLAYERBYTOURNAMENTID);
+                getContext().getContentResolver().notifyChange(uri, null);
                 return ContentUris.withAppendedId(uri, rowID);
         }
         return ContentUris.withAppendedId(uri, -1);

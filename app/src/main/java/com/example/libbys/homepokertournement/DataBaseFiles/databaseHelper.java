@@ -10,7 +10,7 @@ import java.util.Locale;
 public class databaseHelper extends SQLiteOpenHelper {
     public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
     private static final String DATABASE_NAME = "Poker.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     private static final String CREATE_PLAYERTABLE = "Create Table " + PokerContract.PlayerEntry.TABLE_NAME + " ( " +
             PokerContract.PlayerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             PokerContract.PlayerEntry.NAME + " TEXT NOT NULL, " +
@@ -28,10 +28,10 @@ public class databaseHelper extends SQLiteOpenHelper {
 
 
     private static final String CREATE_PLAYERTOTOURNAMENT = "Create Table " + PokerContract.PlayerToTournament.TABLE_NAME + " ( " +
-            PokerContract.PlayerToTournament._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             PokerContract.PlayerToTournament.PLAYER + " INTEGER REFERENCES " + PokerContract.PlayerEntry.TABLE_NAME + "(" + PokerContract.PlayerEntry._ID + ")," +
             PokerContract.PlayerToTournament.TOURNAMENT + " INTEGER REFERENCES " + PokerContract.TournamentEntry.TABLE_NAME + "(" +
-            PokerContract.TournamentEntry._ID + "));";
+            PokerContract.TournamentEntry._ID + "), PRIMARY KEY (" + PokerContract.PlayerToTournament.PLAYER + ", " +
+            PokerContract.PlayerToTournament.TOURNAMENT + "));";
 
     public databaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
