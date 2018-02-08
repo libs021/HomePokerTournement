@@ -9,7 +9,7 @@
     <string name="PlayerNameError">Player name cannot be blank </string>
     <string name="AddedPlayer">Successfully added %1$s</string>
     <string name="Blinds">Blinds %1$d/%2$d</string>
-    <string name="AddPlayer">Add new Player</string>
+    <string name="AddPlayer">Add new player</string>
     <string name="ViewPlayer">View Players</string>
     <string name="NewTournament">Create new Tournament</string>
     <string name="Game">Game</string>
