@@ -21,16 +21,16 @@
         <TextView
             android:id="@+id/nameTextView"
             android:layout_width="match_parent"
-            android:layout_height="24dp"
-            android:gravity="center"
-            android:text="Joel" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center" />
 
         <TextView
             android:id="@+id/chipTextView"
             android:layout_width="match_parent"
-            android:layout_height="24dp"
-            android:gravity="center"
-            android:text="Chip count: 1500" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center" />
     </LinearLayout>
 
 </LinearLayout>

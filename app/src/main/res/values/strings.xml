@@ -23,6 +23,7 @@
     <string name="editChipCount">New Chip Count</string>
     <string name="tournamentPreview">Preview Tournament</string>
     <string name="StartTournamenet">Start Tournament</string>
+    <string name="prize"> $%1$.2f </string>
     <string-array name="GameList">
         <item> "Texas Hold em"</item>
         <item> "Omaha</item>

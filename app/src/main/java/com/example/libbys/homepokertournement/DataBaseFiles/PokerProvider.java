@@ -58,6 +58,9 @@ public class PokerProvider extends ContentProvider {
                 cursor = database.query(PokerContract.TournamentEntry.TABLE_NAME, toSelect, selection, args, null, null, sort);
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
+            case TOURNAMENT_ID:
+                selection = selection + "= ? ";
+                return database.query(PokerContract.TournamentEntry.TABLE_NAME, toSelect, selection, args, null, null, null);
             case PLAYERBYTOURNAMENTID:
                 String query = "Select " + PokerContract.PlayerEntry.NAME + " from " + PokerContract.PlayerEntry.TABLE_NAME + " Left join " + PokerContract.PlayerToTournament.TABLE_NAME +
                         " on " + PokerContract.PlayerEntry.TABLE_NAME + "." + PokerContract.PlayerEntry._ID +
