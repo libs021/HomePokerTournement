@@ -6,10 +6,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -17,15 +19,18 @@ import com.example.libbys.homepokertournement.ArrayAdapters.PayoutAdapter;
 import com.example.libbys.homepokertournement.ArrayAdapters.TournamentPlayerAdapter;
 import com.example.libbys.homepokertournement.CustomPokerClasses.PayOuts;
 import com.example.libbys.homepokertournement.CustomPokerClasses.TournamentPlayer;
+import com.example.libbys.homepokertournement.CustomPokerClasses.TournamentPlayerDialog;
+import com.example.libbys.homepokertournement.CustomPokerClasses.TournamentTimer;
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
- * Created by Libby's on 2/5/2018.
+ * This will manage individual Tournaments prior to tournament starting will allow you to add players. Once the tournament starts you can update the chip counts.
  */
 
-public class TournamentPreview extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class TournamentPreview extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, TournamentPlayerDialog.TournamentPlayerInterface {
     private static final int GETPLAYERLOADER = 10;
     private static final int GETTOURNAMENTINFO = 17;
     private static ArrayList<TournamentPlayer> players = new ArrayList<>();
@@ -33,6 +38,7 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
     TournamentPlayerAdapter tournamentPlayerAdapter;
     PayoutAdapter payoutAdapter;
     int startingChipCount = 0;
+    int numberofPlayersBusted = 0;
 
 
 
@@ -42,20 +48,37 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
         setContentView(R.layout.activity_tournamentpreview);
         getSupportLoaderManager().initLoader(GETPLAYERLOADER, null, TournamentPreview.this);
         getSupportLoaderManager().initLoader(GETTOURNAMENTINFO, null, TournamentPreview.this);
-        ListView playerListView = findViewById(R.id.playerintournament);
+        final ListView playerListView = findViewById(R.id.playerintournament);
         tournamentPlayerAdapter = new TournamentPlayerAdapter(this, R.layout.playerintournamentlistview, players);
         playerListView.setAdapter(tournamentPlayerAdapter);
-        ListView payoutListView = findViewById(R.id.payoutListView);
+        final ListView payoutListView = findViewById(R.id.payoutListView);
         payoutAdapter = new PayoutAdapter(this, R.layout.playerintournamentlistview, prizes);
         payoutListView.setAdapter(payoutAdapter);
-        Button addPlayer = findViewById(R.id.addPlayertournament);
-        Button start = findViewById(R.id.startTournament);
+        final Button addPlayer = findViewById(R.id.addPlayertournament);
+        final Button start = findViewById(R.id.startTournament);
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                long tournamentID = Long.parseLong(getIntent().getData().getLastPathSegment());
-                Intent intent = new Intent(TournamentPreview.this, TournamentProgress.class);
-                startActivity(intent);
+                findViewById(R.id.roundTracker).setVisibility(View.VISIBLE);
+                View rootView = findViewById(R.id.rootViewTournamentpreview);
+                findViewById(R.id.subMenuForPrizes).setVisibility(View.GONE);
+                start.setVisibility(View.GONE);
+                addPlayer.setVisibility(View.GONE);
+                TournamentTimer timer = new TournamentTimer(TournamentPreview.this, 120000, 1, 20, rootView);
+                payoutListView.setVisibility(View.GONE);
+                timer.start();
+                playerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        FragmentManager manager = getSupportFragmentManager();
+                        TournamentPlayerDialog dialog = new TournamentPlayerDialog();
+                        Bundle args = new Bundle();
+                        args.putInt("PlayerToUpdate", i);
+                        dialog.setArguments(args);
+                        dialog.show(manager, "ThisDialog");
+                    }
+                });
+
             }
         });
         addPlayer.setOnClickListener(new View.OnClickListener() {
@@ -120,9 +143,9 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
                 int playerCount = Integer.parseInt(playerCountString);
                 int cost = cursor.getInt(cursor.getColumnIndex(PokerContract.TournamentEntry.COST));
                 double[] payoutPercent = null;
-                if (playerCount < 10) {
+                if (playerCount < 30) {
                     payoutPercent = PayOuts.LESSTHAN30;
-                } else if (playerCount < 30) {
+                } else if (playerCount < 50) {
                     payoutPercent = PayOuts.LESSTHAN50;
                 } else if (playerCount < 100) {
                     payoutPercent = PayOuts.LESSTHAN100;
@@ -141,5 +164,24 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+    }
+
+    @Override
+    public void bust(int player) {
+        TournamentPlayer playertoUpdate = players.get(player);
+        playertoUpdate.setmChipCount(0 - players.size() + numberofPlayersBusted);
+        numberofPlayersBusted++;
+        Collections.sort(players);
+        tournamentPlayerAdapter.notifyDataSetChanged();
+
+    }
+
+    @Override
+    public void updatePlayer(int player, int count) {
+        players.get(player).setmChipCount(count);
+        Collections.sort(players);
+        tournamentPlayerAdapter.notifyDataSetChanged();
+
+
     }
 }
