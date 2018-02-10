@@ -13,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerPlayerCursorAdapter;
@@ -120,7 +119,6 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
                 Uri uri = getIntent().getData();
                 String ID = uri.getLastPathSegment();
                 int toID = Integer.parseInt(ID);
-                int numberOfPlayers = 0;
                 ContentValues values = new ContentValues();
                 for (int i = 0; i < cursorAdapter.getCount(); i++) {
                     if (isItemSelected[i]) {
@@ -131,13 +129,8 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
                         values.put(PokerContract.PlayerToTournament.PLAYER, playerID);
                         getContentResolver().insert(PokerContract.PlayerToTournament.CONTENT_URI, values);
                         values.clear();
-                        numberOfPlayers++;
                     }
                 }
-                values.put(PokerContract.TournamentEntry.NUMPLAYERS, numberOfPlayers);
-                String[] idToUpdate = {ID};
-                getContentResolver().update(uri, values, PokerContract.TournamentEntry._ID, idToUpdate);
-                Toast.makeText(PlayerListActivity.this, "You inserted" + numberOfPlayers, Toast.LENGTH_LONG).show();
                 finish();
             }
         });

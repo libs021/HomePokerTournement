@@ -163,7 +163,7 @@ public class TournamentActivity extends AppCompatActivity {
         Calendar c = Calendar.getInstance();
         Date today = c.getTime();
         try {
-            Date d = databaseHelper.DATE_FORMAT.parse(time);
+            Date d = databaseHelper.DATABASE_DATE_FORMAT.parse(time);
             if (d.after(today)) return true;
         } catch (java.text.ParseException e) {
             e.printStackTrace();

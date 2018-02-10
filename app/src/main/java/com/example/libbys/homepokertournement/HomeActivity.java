@@ -88,10 +88,10 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         String[] toSelect = {PokerContract.TournamentEntry._ID, PokerContract.TournamentEntry.GAME,
-                PokerContract.TournamentEntry.COST, PokerContract.TournamentEntry.NUMPLAYERS, PokerContract.TournamentEntry.STARTTIME};
+                PokerContract.TournamentEntry.COST, PokerContract.TournamentEntry.STARTTIME};
         Calendar c = Calendar.getInstance();
         Date today = c.getTime();
-        String time = databaseHelper.DATE_FORMAT.format(today);
+        String time = databaseHelper.DATABASE_DATE_FORMAT.format(today);
         String[] selectionArgs = {time};
         return new android.support.v4.content.CursorLoader(this, PokerContract.TournamentEntry.CONTENT_URI, toSelect, PokerContract.TournamentEntry.STARTTIME,
                 selectionArgs, PokerContract.TournamentEntry.STARTTIME);

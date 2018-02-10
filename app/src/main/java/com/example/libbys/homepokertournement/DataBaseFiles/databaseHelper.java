@@ -8,9 +8,10 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 public class databaseHelper extends SQLiteOpenHelper {
-    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+    public static final SimpleDateFormat DATABASE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+    public static final SimpleDateFormat APP_DATE_FORMAT = new SimpleDateFormat("MM-dd HH:MM");
     private static final String DATABASE_NAME = "Poker.db";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
     private static final String CREATE_PLAYERTABLE = "Create Table " + PokerContract.PlayerEntry.TABLE_NAME + " ( " +
             PokerContract.PlayerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             PokerContract.PlayerEntry.NAME + " TEXT NOT NULL, " +
@@ -22,7 +23,6 @@ public class databaseHelper extends SQLiteOpenHelper {
             PokerContract.TournamentEntry.STARTTIME + " DATETIME NOT NULL, " +
             PokerContract.TournamentEntry.ENDTIME + " DATETIME, " +
             PokerContract.TournamentEntry.GAME + " TEXT NOT NULL, " +
-            PokerContract.TournamentEntry.NUMPLAYERS + " INTEGER DEFAULT 0, " +
             PokerContract.TournamentEntry.COST + " INTEGER NOT NULL, " +
             PokerContract.TournamentEntry.STARTINGCHIPS + " INTEGER DEFAULT 1500);";
 
@@ -33,7 +33,7 @@ public class databaseHelper extends SQLiteOpenHelper {
             PokerContract.TournamentEntry._ID + "), PRIMARY KEY (" + PokerContract.PlayerToTournament.PLAYER + ", " +
             PokerContract.PlayerToTournament.TOURNAMENT + "));";
 
-    databaseHelper(Context context) {
+    public databaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

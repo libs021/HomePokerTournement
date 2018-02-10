@@ -11,6 +11,9 @@ import android.widget.TextView;
 
 import com.example.libbys.homepokertournement.R;
 
+import java.text.ParseException;
+import java.util.Date;
+
 /**
  * Manages the Poker Tournament List view.
  */
@@ -54,13 +57,16 @@ public class PokerTournamentCursorAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         TextView date = view.findViewById(R.id.date);
         TextView cost = view.findViewById(R.id.cost);
-        TextView numOfPlayers = view.findViewById(R.id.numOfplayers);
 
         String date1 = (cursor.getString(cursor.getColumnIndex(PokerContract.TournamentEntry.STARTTIME)));
         String cost1 = (cursor.getString(cursor.getColumnIndex(PokerContract.TournamentEntry.COST)));
-        String NumPlayers1 = (cursor.getString(cursor.getColumnIndex(PokerContract.TournamentEntry.NUMPLAYERS)));
-        date.setText(date1);
+        try {
+            Date toformat = databaseHelper.DATABASE_DATE_FORMAT.parse(date1);
+            String formattedDate = databaseHelper.APP_DATE_FORMAT.format(toformat);
+            date.setText(formattedDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         cost.setText(cost1);
-        numOfPlayers.setText(NumPlayers1);
     }
 }

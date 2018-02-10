@@ -42,8 +42,6 @@ public final class PokerContract {
         public static final String GAME = "Game";
         //represents the start time of the Tournement
         public static final String STARTTIME = "StartTime";
-        // represents the number of players
-        public static final String NUMPLAYERS = "Players";
         // represents the cost of the Tournament
         public static final String COST = "Costs";
         // Represents the starting Chip Count of the tournament
