@@ -13,7 +13,8 @@ import android.widget.EditText;
 import com.example.libbys.homepokertournement.R;
 
 /**
- * Created by Libby's on 2/3/2018.
+ * Allows users to click on a player during a tournament, they will then be alert with this dialog that will allow them ot update
+ * the players chip count or bust them.
  */
 
 public class TournamentPlayerDialog extends DialogFragment {
@@ -50,7 +51,7 @@ public class TournamentPlayerDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.tournamentplayeredit, null);
+        View view = inflater.inflate(R.layout.tournamentplayeredit, container, false);
         cancel = view.findViewById(R.id.cancelButton);
         update = view.findViewById(R.id.updateButton);
         bust = view.findViewById(R.id.bustButton);

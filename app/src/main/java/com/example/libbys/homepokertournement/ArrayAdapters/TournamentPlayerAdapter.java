@@ -14,7 +14,7 @@ import com.example.libbys.homepokertournement.R;
 import java.util.ArrayList;
 
 /**
- * Created by Libby's on 1/29/2018.
+ * This Array Adapter populates information about a player in a tournament
  */
 
 public class TournamentPlayerAdapter extends ArrayAdapter<TournamentPlayer> {
@@ -24,7 +24,8 @@ public class TournamentPlayerAdapter extends ArrayAdapter<TournamentPlayer> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    @NonNull
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.playerintournamentlistview, parent, false);
         }
@@ -34,7 +35,7 @@ public class TournamentPlayerAdapter extends ArrayAdapter<TournamentPlayer> {
         TextView playerName = convertView.findViewById(R.id.nameTextView);
         TextView chipCount = convertView.findViewById(R.id.chipTextView);
         //The array should be sorted prior to displaying the listview.
-        standing.setText("#" + (position + 1));
+        standing.setText(String.format(getContext().getApplicationContext().getString(R.string.position), position + 1));
         playerName.setText(player.getmName());
         int numofChips = player.getmChipCount();
         chipCount.setText(String.valueOf(numofChips));

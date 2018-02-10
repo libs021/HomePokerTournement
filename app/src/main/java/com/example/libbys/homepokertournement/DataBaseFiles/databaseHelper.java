@@ -33,7 +33,7 @@ public class databaseHelper extends SQLiteOpenHelper {
             PokerContract.TournamentEntry._ID + "), PRIMARY KEY (" + PokerContract.PlayerToTournament.PLAYER + ", " +
             PokerContract.PlayerToTournament.TOURNAMENT + "));";
 
-    public databaseHelper(Context context) {
+    databaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 

@@ -19,17 +19,17 @@
             android:id="@+id/cancelButton"
             style="@style/DefaultButton"
             android:layout_width="0dp"
-            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
             android:layout_weight="1"
-            android:text="Cancel" />
+            android:text="@string/cancel" />
 
         <Button
             android:id="@+id/updateButton"
             style="@style/DefaultButton"
             android:layout_width="0dp"
-            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
             android:layout_weight="1"
-            android:text="Update" />
+            android:text="@string/Update" />
 
         <Button
             android:id="@+id/bustButton"
@@ -38,7 +38,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_weight="1"
-            android:text="Bust" />
+            android:text="@string/Bust" />
     </LinearLayout>
 
 </LinearLayout>

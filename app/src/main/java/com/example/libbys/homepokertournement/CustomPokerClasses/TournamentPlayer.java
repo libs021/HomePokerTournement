@@ -12,7 +12,7 @@ public class TournamentPlayer implements Comparable<TournamentPlayer> {
     private String mName;
     private int mChipCount;
 
-    public TournamentPlayer(String Name, int ChipCount) {
+    public TournamentPlayer(@NonNull String Name, int ChipCount) {
         mName = Name;
         mChipCount = ChipCount;
     }

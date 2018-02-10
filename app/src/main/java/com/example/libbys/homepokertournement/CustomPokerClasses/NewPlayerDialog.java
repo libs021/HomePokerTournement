@@ -15,7 +15,7 @@ import com.example.libbys.homepokertournement.R;
 
 
 /**
- * Created by Libby's on 2/8/2018.
+ * Opens up a new dialog box, for the user to input a name of a new player.
  */
 
 public class NewPlayerDialog extends DialogFragment {
@@ -48,7 +48,7 @@ public class NewPlayerDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.newplayer, null);
+        View view = inflater.inflate(R.layout.newplayer, container, false);
         final EditText nameEditText = view.findViewById(R.id.nameEditText);
         Button addPlayer = view.findViewById(R.id.button);
         addPlayer.setOnClickListener(new View.OnClickListener() {

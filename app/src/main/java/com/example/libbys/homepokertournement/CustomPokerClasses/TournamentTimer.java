@@ -8,30 +8,27 @@ import android.widget.TextView;
 import com.example.libbys.homepokertournement.R;
 
 /**
- * Created by Libby's on 2/1/2018.
+ * Manages a timer used to move onto the next round
  */
 
 public class TournamentTimer extends CountDownTimer {
-    long mTimeLimit;
-    int mSmallBlind;
-    int mRound;
-    View mRoot;
-    TextView mBlindsTextView;
-    TextView mTimeTextView;
-    TextView mRoundTextView;
-    Context mContext;
+    private int mSmallBlind;
+    private int mRound;
+    private TextView mBlindsTextView;
+    private TextView mTimeTextView;
+    private TextView mRoundTextView;
+    private Context mContext;
 
     public TournamentTimer(Context context, long timeLimit, int round, int smallBlind, View rootView) {
         super(timeLimit, 1000);
         mContext = context;
         mRound = round;
         mSmallBlind = smallBlind;
-        mRoot = rootView;
         mBlindsTextView = rootView.findViewById(R.id.blinds);
         mTimeTextView = rootView.findViewById(R.id.timer);
         mRoundTextView = rootView.findViewById(R.id.roundTracker);
-        mRoundTextView.setText("Round: " + mRound);
-        mBlindsTextView.setText(mContext.getString(R.string.Blinds, mSmallBlind, mSmallBlind * 2));
+        mRoundTextView.setText(String.format(mContext.getApplicationContext().getString(R.string.Round), mRound));
+        mBlindsTextView.setText(String.format(mContext.getApplicationContext().getString(R.string.Blinds), smallBlind, smallBlind * 2));
         mTimeTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,7 +51,7 @@ public class TournamentTimer extends CountDownTimer {
 
     public void onFinish() {
         mRound = mRound + 1;
-        mRoundTextView.setText("Round: " + mRound);
+        mRoundTextView.setText(String.format(mContext.getApplicationContext().getString(R.string.Blinds), mSmallBlind, mSmallBlind * 2));
         mBlindsTextView.setText(mContext.getString(R.string.Blinds, mSmallBlind, mSmallBlind * 2));
         mSmallBlind = mSmallBlind * 2;
         //Will Keep cycling through rounds until the tournament is manually ended.

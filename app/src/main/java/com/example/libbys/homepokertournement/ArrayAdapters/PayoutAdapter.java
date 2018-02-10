@@ -23,7 +23,8 @@ public class PayoutAdapter extends ArrayAdapter<String> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    @NonNull
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.playerintournamentlistview, parent, false);
         }
@@ -32,7 +33,7 @@ public class PayoutAdapter extends ArrayAdapter<String> {
         TextView standing = convertView.findViewById(R.id.PositionTextView);
         TextView playerName = convertView.findViewById(R.id.nameTextView);
         TextView chipCount = convertView.findViewById(R.id.chipTextView);
-        standing.setText("#" + (position + 1));
+        standing.setText(getContext().getApplicationContext().getString(R.string.position, (position + 1)));
         playerName.setText(getItem(position));
         chipCount.setVisibility(View.GONE);
         return convertView;
