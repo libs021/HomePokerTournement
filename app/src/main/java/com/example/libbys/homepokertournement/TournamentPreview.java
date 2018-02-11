@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -74,7 +73,7 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
                 findViewById(R.id.subMenuForPrizes).setVisibility(View.GONE);
                 start.setVisibility(View.GONE);
                 addPlayer.setVisibility(View.GONE);
-                TournamentTimer timer = new TournamentTimer(TournamentPreview.this, 15000, 1, 20, rootView);
+                TournamentTimer timer = new TournamentTimer(TournamentPreview.this, 15000, 1, rootView);
                 payoutListView.setVisibility(View.GONE);
                 timer.start();
                 playerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -232,8 +231,7 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
             Uri uri = Uri.withAppendedPath(PokerContract.BASE_CONTENT_URI, PokerContract.PATH_PLAYERS);
             uri = ContentUris.withAppendedId(uri, cursorID);
             String[] args = {String.valueOf(cursorID)};
-            int j = getContentResolver().update(uri, values, PokerContract.PlayerEntry._ID, args);
-            Log.e("Hello", "endTournament: " + players.get(i).getmName() + j);
+            getContentResolver().update(uri, values, PokerContract.PlayerEntry._ID, args);
             playerInfo.moveToNext();
 
         }

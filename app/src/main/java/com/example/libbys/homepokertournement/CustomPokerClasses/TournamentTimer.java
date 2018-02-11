@@ -12,23 +12,24 @@ import com.example.libbys.homepokertournement.R;
  */
 
 public class TournamentTimer extends CountDownTimer {
-    private int mSmallBlind;
     private int mRound;
     private TextView mBlindsTextView;
     private TextView mTimeTextView;
     private TextView mRoundTextView;
     private Context mContext;
+    private View mrootView;
+    private int numberOfBreaks = 0;
 
-    public TournamentTimer(Context context, long timeLimit, int round, int smallBlind, View rootView) {
+    public TournamentTimer(Context context, long timeLimit, int round, View rootView) {
         super(timeLimit, 1000);
         mContext = context;
         mRound = round;
-        mSmallBlind = smallBlind;
         mBlindsTextView = rootView.findViewById(R.id.blinds);
         mTimeTextView = rootView.findViewById(R.id.timer);
         mRoundTextView = rootView.findViewById(R.id.roundTracker);
         mRoundTextView.setText(String.format(mContext.getApplicationContext().getString(R.string.Round), mRound));
-        mBlindsTextView.setText(String.format(mContext.getApplicationContext().getString(R.string.Blinds), smallBlind, smallBlind * 2));
+        mBlindsTextView.setText(mContext.getString(R.string.Blinds, Blinds.DEFAULT_BLINDS1500[mRound - 1], Blinds.DEFAULT_BLINDS1500[mRound - 1] * 2));
+        mrootView = rootView;
         mTimeTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -50,11 +51,15 @@ public class TournamentTimer extends CountDownTimer {
     }
 
     public void onFinish() {
-        mSmallBlind = mSmallBlind * 2;
         mRound = mRound + 1;
-        mRoundTextView.setText(String.format(mContext.getApplicationContext().getString(R.string.Round), mRound));
-        mBlindsTextView.setText(mContext.getString(R.string.Blinds, mSmallBlind, mSmallBlind * 2));
+        mRoundTextView.setText(String.format(mContext.getApplicationContext().getString(R.string.Round), mRound - numberOfBreaks));
+        mBlindsTextView.setText(mContext.getString(R.string.Blinds, Blinds.DEFAULT_BLINDS1500[mRound - 1 - numberOfBreaks], Blinds.DEFAULT_BLINDS1500[mRound - 1 - numberOfBreaks] * 2));
         //Will Keep cycling through rounds until the tournament is manually ended.
+        if (mRound % 4 == 0) {
+            mRoundTextView.setText(R.string.Break);
+            numberOfBreaks++;
+
+        }
         this.start();
     }
 }

@@ -33,6 +33,7 @@
     <string name="Update">Update</string>
     <string name="CostDispley">Cost: \n  %1$s</string>
     <string name="DateDispley">Date: \n %1$s</string>
+    <string name="Break">On Break</string>
     <string-array name="GameList">
         <item> "Texas Hold em"</item>
         <item> "Omaha</item>
