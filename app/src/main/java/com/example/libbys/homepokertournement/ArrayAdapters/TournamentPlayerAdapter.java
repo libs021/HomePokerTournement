@@ -38,7 +38,13 @@ public class TournamentPlayerAdapter extends ArrayAdapter<TournamentPlayer> {
         standing.setText(String.format(getContext().getApplicationContext().getString(R.string.position), position + 1));
         playerName.setText(player.getmName());
         int numofChips = player.getmChipCount();
-        chipCount.setText(String.valueOf(numofChips));
+        if (numofChips < 0) {
+            chipCount.setText(String.valueOf(0));
+            convertView.setBackgroundColor(convertView.getResources().getColor(R.color.colorPrimaryDark, null));
+        } else {
+            chipCount.setText(String.valueOf(numofChips));
+            convertView.setBackgroundColor(0x000000);
+        }
         return convertView;
     }
 }

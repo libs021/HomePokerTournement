@@ -50,10 +50,10 @@ public class TournamentTimer extends CountDownTimer {
     }
 
     public void onFinish() {
-        mRound = mRound + 1;
-        mRoundTextView.setText(String.format(mContext.getApplicationContext().getString(R.string.Blinds), mSmallBlind, mSmallBlind * 2));
-        mBlindsTextView.setText(mContext.getString(R.string.Blinds, mSmallBlind, mSmallBlind * 2));
         mSmallBlind = mSmallBlind * 2;
+        mRound = mRound + 1;
+        mRoundTextView.setText(String.format(mContext.getApplicationContext().getString(R.string.Round), mRound));
+        mBlindsTextView.setText(mContext.getString(R.string.Blinds, mSmallBlind, mSmallBlind * 2));
         //Will Keep cycling through rounds until the tournament is manually ended.
         this.start();
     }

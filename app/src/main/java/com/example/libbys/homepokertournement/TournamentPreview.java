@@ -1,6 +1,7 @@
 package com.example.libbys.homepokertournement;
 
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -30,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
+import static android.content.ContentUris.withAppendedId;
+
 /**
  * This will manage individual Tournaments prior to tournament starting will allow you to add players. Once the tournament starts you can update the chip counts.
  */
@@ -37,15 +41,16 @@ import java.util.Date;
 public class TournamentPreview extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, TournamentPlayerDialog.TournamentPlayerInterface {
     private static final int GETPLAYERLOADER = 10;
     private static final int GETTOURNAMENTINFO = 17;
+    static TournamentPlayerAdapter tournamentPlayerAdapter;
+    static PayoutAdapter payoutAdapter;
+    static int startingChipCount = 0;
+    static int numberofPlayersBusted = 0;
+    static TextView blindstartTimeTextView;
+    static ArrayList<Integer> playerIDs = new ArrayList<>();
+    static Cursor playerInfo;
+    static int cost;
     private static ArrayList<TournamentPlayer> players = new ArrayList<>();
-    private static ArrayList<String> prizes = new ArrayList<>();
-    TournamentPlayerAdapter tournamentPlayerAdapter;
-    PayoutAdapter payoutAdapter;
-    int startingChipCount = 0;
-    int numberofPlayersBusted = 0;
-    TextView blindstartTimeTextView;
-
-
+    private static ArrayList<Double> prizes = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,7 +74,7 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
                 findViewById(R.id.subMenuForPrizes).setVisibility(View.GONE);
                 start.setVisibility(View.GONE);
                 addPlayer.setVisibility(View.GONE);
-                TournamentTimer timer = new TournamentTimer(TournamentPreview.this, 120000, 1, 20, rootView);
+                TournamentTimer timer = new TournamentTimer(TournamentPreview.this, 15000, 1, 20, rootView);
                 payoutListView.setVisibility(View.GONE);
                 timer.start();
                 playerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -106,13 +111,13 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
         switch (i) {
             case GETPLAYERLOADER:
                 Uri toquery = Uri.withAppendedPath(PokerContract.BASE_CONTENT_URI, PokerContract.PATH_GETPLAYERBYTOURNAMENTID);
-                toquery = ContentUris.withAppendedId(toquery, id);
+                toquery = withAppendedId(toquery, id);
                 return new android.support.v4.content.CursorLoader(this, toquery, null, null, selectionArgs, null);
             case GETTOURNAMENTINFO:
                 String[] toSelect = {PokerContract.TournamentEntry._ID, PokerContract.TournamentEntry.STARTINGCHIPS, PokerContract.TournamentEntry.STARTTIME,
                         PokerContract.TournamentEntry.COST};
                 Uri query = Uri.withAppendedPath(PokerContract.BASE_CONTENT_URI, PokerContract.PATH_TOURNAMENT);
-                query = ContentUris.withAppendedId(query, id);
+                query = withAppendedId(query, id);
                 return new android.support.v4.content.CursorLoader(this, query, toSelect, PokerContract.TournamentEntry._ID, selectionArgs, null);
             default:
                 return null;
@@ -122,20 +127,22 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        loader.getId();
         switch (loader.getId()) {
             case GETPLAYERLOADER:
                 if (cursor.moveToFirst()) {
                     players.clear();
                     do {
-                        TournamentPlayer playerToAdd = new TournamentPlayer(cursor.getString(cursor.getColumnIndex(PokerContract.PlayerEntry.NAME)), 0);
+                        int playerID = cursor.getInt(cursor.getColumnIndex(PokerContract.PlayerEntry._ID));
+                        TournamentPlayer playerToAdd = new TournamentPlayer(cursor.getString(cursor.getColumnIndex(PokerContract.PlayerEntry.NAME)), 0, playerID);
                         players.add(playerToAdd);
+                        playerIDs.add(playerID);
                     } while (cursor.moveToNext());
                 }
                 //this eliminates the race condition when both loaders kicked off at the same time. Since the Tournement info gets
                 //set on the player we can wait initialize the loader.
                 getSupportLoaderManager().initLoader(GETTOURNAMENTINFO, null, TournamentPreview.this);
                 //No need to notify change as we notify both adapters they changed when done loading info from the tournament
+                playerInfo = cursor;
                 break;
             case GETTOURNAMENTINFO:
                 cursor.moveToFirst();
@@ -148,7 +155,7 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
                     }
                 }
                 int playerCount = players.size();
-                int cost = cursor.getInt(cursor.getColumnIndex(PokerContract.TournamentEntry.COST));
+                cost = cursor.getInt(cursor.getColumnIndex(PokerContract.TournamentEntry.COST));
                 double[] payoutPercent = null;
                 if (playerCount < 30) {
                     payoutPercent = PayOuts.LESSTHAN30;
@@ -161,8 +168,8 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
                 int prizePool = cost * playerCount;
                 for (int i = 0; i < payoutPercent.length; i++) {
                     double prize = prizePool * payoutPercent[i];
-                    String stringPrize = String.format(getApplicationContext().getString(R.string.prize), prize);
-                    prizes.add(stringPrize);
+                    prizes.add(prize);
+
                 }
                 try {
                     Date toformat = databaseHelper.DATABASE_DATE_FORMAT.parse(startTime);
@@ -187,8 +194,8 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
         playertoUpdate.setmChipCount(0 - players.size() + numberofPlayersBusted);
         numberofPlayersBusted++;
         Collections.sort(players);
+        if (numberofPlayersBusted == players.size() - 1) endTournament();
         tournamentPlayerAdapter.notifyDataSetChanged();
-
     }
 
     @Override
@@ -196,5 +203,39 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
         players.get(player).setmChipCount(count);
         Collections.sort(players);
         tournamentPlayerAdapter.notifyDataSetChanged();
+    }
+
+    public void endTournament() {
+        int cursorID;
+        int cursorBuyin;
+        double cursorCashout;
+        int cursorPlayed;
+        double win;
+        ContentValues values = new ContentValues();
+        playerInfo.moveToFirst();
+
+
+        for (int i = 0; i < players.size(); i++) {
+            values.clear();
+            cursorCashout = 0;
+            if (i < prizes.size()) {
+                cursorCashout = playerInfo.getInt(playerInfo.getColumnIndex(PokerContract.PlayerEntry.CASHOUT)) + prizes.get(i);
+                values.put(PokerContract.PlayerEntry.CASHOUT, cursorCashout);
+            }
+            cursorBuyin = playerInfo.getInt(playerInfo.getColumnIndex(PokerContract.PlayerEntry.BUYIN)) + cost;
+            values.put(PokerContract.PlayerEntry.BUYIN, cursorBuyin);
+            cursorPlayed = playerInfo.getInt(playerInfo.getColumnIndex(PokerContract.PlayerEntry.PLAYED)) + 1;
+            values.put(PokerContract.PlayerEntry.PLAYED, cursorPlayed);
+            win = playerInfo.getInt(playerInfo.getColumnIndex(PokerContract.PlayerEntry.WIN)) + (cursorCashout - cursorBuyin);
+            values.put(PokerContract.PlayerEntry.WIN, win);
+            cursorID = players.get(i).getmID();
+            Uri uri = Uri.withAppendedPath(PokerContract.BASE_CONTENT_URI, PokerContract.PATH_PLAYERS);
+            uri = ContentUris.withAppendedId(uri, cursorID);
+            String[] args = {String.valueOf(cursorID)};
+            int j = getContentResolver().update(uri, values, PokerContract.PlayerEntry._ID, args);
+            Log.e("Hello", "endTournament: " + players.get(i).getmName() + j);
+            playerInfo.moveToNext();
+
+        }
     }
 }

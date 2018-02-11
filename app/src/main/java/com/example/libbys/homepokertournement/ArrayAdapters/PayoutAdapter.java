@@ -16,9 +16,9 @@ import java.util.ArrayList;
  * Populates the tournament Preview page with the prizes. We reuse the Layout for populate the player listView.
  */
 
-public class PayoutAdapter extends ArrayAdapter<String> {
+public class PayoutAdapter extends ArrayAdapter<Double> {
 
-    public PayoutAdapter(@NonNull Context context, int resource, @NonNull ArrayList<String> players) {
+    public PayoutAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Double> players) {
         super(context, resource, players);
     }
 
@@ -34,7 +34,7 @@ public class PayoutAdapter extends ArrayAdapter<String> {
         TextView playerName = convertView.findViewById(R.id.nameTextView);
         TextView chipCount = convertView.findViewById(R.id.chipTextView);
         standing.setText(getContext().getApplicationContext().getString(R.string.position, (position + 1)));
-        playerName.setText(getItem(position));
+        playerName.setText(getContext().getApplicationContext().getString(R.string.prize, getItem(position)));
         chipCount.setVisibility(View.GONE);
         return convertView;
     }

@@ -5,7 +5,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/date"
+        android:id="@+id/tournamentType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -24,7 +24,7 @@
             android:gravity="center" />
 
         <TextView
-            android:id="@+id/numOfplayers"
+            android:id="@+id/date"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

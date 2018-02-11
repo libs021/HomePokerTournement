@@ -55,18 +55,21 @@ public class PokerTournamentCursorAdapter extends CursorAdapter {
      */
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView date = view.findViewById(R.id.date);
+        TextView game = view.findViewById(R.id.tournamentType);
         TextView cost = view.findViewById(R.id.cost);
+        TextView date = view.findViewById(R.id.date);
 
         String date1 = (cursor.getString(cursor.getColumnIndex(PokerContract.TournamentEntry.STARTTIME)));
         String cost1 = (cursor.getString(cursor.getColumnIndex(PokerContract.TournamentEntry.COST)));
+        String gametype = (cursor.getString(cursor.getColumnIndex(PokerContract.TournamentEntry.GAME)));
         try {
             Date toformat = databaseHelper.DATABASE_DATE_FORMAT.parse(date1);
             String formattedDate = databaseHelper.APP_DATE_FORMAT.format(toformat);
-            date.setText(formattedDate);
+            date.setText(context.getApplicationContext().getString(R.string.DateDispley, formattedDate));
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        cost.setText(cost1);
+        cost.setText(context.getApplicationContext().getString(R.string.CostDispley, cost1));
+        game.setText(gametype);
     }
 }

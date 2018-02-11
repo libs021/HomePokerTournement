@@ -11,13 +11,14 @@ public class databaseHelper extends SQLiteOpenHelper {
     public static final SimpleDateFormat DATABASE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
     public static final SimpleDateFormat APP_DATE_FORMAT = new SimpleDateFormat("MM-dd HH:MM");
     private static final String DATABASE_NAME = "Poker.db";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
     private static final String CREATE_PLAYERTABLE = "Create Table " + PokerContract.PlayerEntry.TABLE_NAME + " ( " +
             PokerContract.PlayerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             PokerContract.PlayerEntry.NAME + " TEXT NOT NULL, " +
             PokerContract.PlayerEntry.BUYIN + " INTEGER DEFAULT 0, " +
-            PokerContract.PlayerEntry.CASHOUT + " INTEGER DEFAULT 0, " +
-            PokerContract.PlayerEntry.WIN + "  DEFAULT 0); ";
+            PokerContract.PlayerEntry.CASHOUT + " DOUBLE DEFAULT 0, " +
+            PokerContract.PlayerEntry.PLAYED + " INTEGER DEFAULT 0, " +
+            PokerContract.PlayerEntry.WIN + " DOUBLE DEFAULT 0); ";
     private static final String CREATE_TOURNEMENTTABLB = "Create Table " + PokerContract.TournamentEntry.TABLE_NAME + " ( " +
             PokerContract.TournamentEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             PokerContract.TournamentEntry.STARTTIME + " DATETIME NOT NULL, " +

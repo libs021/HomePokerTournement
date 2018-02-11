@@ -62,7 +62,7 @@ public class PokerProvider extends ContentProvider {
                 selection = selection + "= ? ";
                 return database.query(PokerContract.TournamentEntry.TABLE_NAME, toSelect, selection, args, null, null, null);
             case PLAYERBYTOURNAMENTID:
-                String query = "Select " + PokerContract.PlayerEntry.NAME + " from " + PokerContract.PlayerEntry.TABLE_NAME + " Left join " + PokerContract.PlayerToTournament.TABLE_NAME +
+                String query = "Select * from " + PokerContract.PlayerEntry.TABLE_NAME + " Left join " + PokerContract.PlayerToTournament.TABLE_NAME +
                         " on " + PokerContract.PlayerEntry.TABLE_NAME + "." + PokerContract.PlayerEntry._ID +
                         " = " + PokerContract.PlayerToTournament.PLAYER + "  where " + PokerContract.PlayerToTournament.TABLE_NAME +
                         "." + PokerContract.PlayerToTournament.TOURNAMENT + " = ? ";
@@ -112,6 +112,10 @@ public class PokerProvider extends ContentProvider {
         SQLiteDatabase database = db.getReadableDatabase();
         int numberOfRowsUpdated = 0;
         switch (sUriMatcher.match(uri)) {
+            case PLAYER_ID:
+                s = s + "=?";
+                numberOfRowsUpdated = database.update(PokerContract.PlayerEntry.TABLE_NAME, contentValues, s, strings);
+                return numberOfRowsUpdated;
             case TOURNAMENT_ID:
                 s = s + "=?";
                 numberOfRowsUpdated = database.update(PokerContract.TournamentEntry.TABLE_NAME, contentValues, s, strings);

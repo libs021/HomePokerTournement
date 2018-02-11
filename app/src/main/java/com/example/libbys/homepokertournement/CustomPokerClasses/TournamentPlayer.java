@@ -9,12 +9,19 @@ import android.support.annotation.NonNull;
 
 public class TournamentPlayer implements Comparable<TournamentPlayer> {
 
+    //represents the name of the play in Question
     private String mName;
+
+    //represents the chip count of the player
     private int mChipCount;
 
-    public TournamentPlayer(@NonNull String Name, int ChipCount) {
+    //Represents the playedID of the Player
+    private int mID;
+
+    public TournamentPlayer(@NonNull String Name, int ChipCount, int id) {
         mName = Name;
         mChipCount = ChipCount;
+        mID = id;
     }
 
     public String getmName() {
@@ -27,6 +34,10 @@ public class TournamentPlayer implements Comparable<TournamentPlayer> {
 
     public void setmChipCount(int ChipCount) {
         mChipCount = ChipCount;
+    }
+
+    public int getmID() {
+        return mID;
     }
 
     @Override
