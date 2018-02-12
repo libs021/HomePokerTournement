@@ -137,13 +137,16 @@ public class TournamentActivity extends AppCompatActivity {
         }
         if (startDate.length() == 0 || startTime.length() == 0 || costString.length() == 0) {
             Toast.makeText(this, "Start Date, Start time, and Cost are required", Toast.LENGTH_LONG).show();
+            return;
         }
         String dateTime = date + " " + time;
         newTournament.put(PokerContract.TournamentEntry.GAME, game);
         newTournament.put(PokerContract.TournamentEntry.STARTTIME, dateTime);
         newTournament.put(PokerContract.TournamentEntry.COST, costString);
-        if (!verifyData(newTournament))
-            Toast.makeText(this, "Error Creating Tournament", Toast.LENGTH_LONG).show();
+        if (!verifyData(newTournament)) {
+            Toast.makeText(this, "Tournament Must Start in the future.", Toast.LENGTH_LONG).show();
+            return;
+        }
         Uri uri = getContentResolver().insert(PokerContract.TournamentEntry.CONTENT_URI, newTournament);
         String id = uri.getLastPathSegment();
         if (!id.equals("-1")) {

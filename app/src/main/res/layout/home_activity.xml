@@ -10,6 +10,20 @@
         android:background="@drawable/pokerchips"
         android:contentDescription="PokerImage" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Upcoming Tournaments"
+        android:textSize="24dp"
+        android:textStyle="bold" />
+
+    <ListView
+        android:id="@+id/tournamentListView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"></ListView>
+
     <Button
         android:id="@+id/AddPlayer"
         style="@style/DefaultButton"
@@ -23,18 +37,7 @@
     <Button
         android:id="@+id/NewTournament"
         style="@style/DefaultButton"
+        android:layout_marginBottom="16dp"
         android:text="@string/NewTournament" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Upcoming Tournaments"
-        android:textSize="24dp"
-        android:textStyle="bold" />
-
-    <ListView
-        android:id="@+id/tournamentListView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"></ListView>
 </LinearLayout>
