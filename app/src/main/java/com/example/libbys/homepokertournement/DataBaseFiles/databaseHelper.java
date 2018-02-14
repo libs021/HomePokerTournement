@@ -31,7 +31,9 @@ public class databaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_PLAYERTOTOURNAMENT = "Create Table " + PokerContract.PlayerToTournament.TABLE_NAME + " ( " +
             PokerContract.PlayerToTournament.PLAYER + " INTEGER REFERENCES " + PokerContract.PlayerEntry.TABLE_NAME + "(" + PokerContract.PlayerEntry._ID + ")," +
             PokerContract.PlayerToTournament.TOURNAMENT + " INTEGER REFERENCES " + PokerContract.TournamentEntry.TABLE_NAME + "(" +
-            PokerContract.TournamentEntry._ID + "), PRIMARY KEY (" + PokerContract.PlayerToTournament.PLAYER + ", " +
+            PokerContract.TournamentEntry._ID + "), " +
+            PokerContract.PlayerToTournament.POSITION + " INTEGER, " +
+            PokerContract.PlayerToTournament.PRIZE + " INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (" + PokerContract.PlayerToTournament.PLAYER + ", " +
             PokerContract.PlayerToTournament.TOURNAMENT + "));";
 
     public databaseHelper(Context context) {

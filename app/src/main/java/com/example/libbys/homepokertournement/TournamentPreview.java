@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.libbys.homepokertournement.ArrayAdapters.PayoutAdapter;
 import com.example.libbys.homepokertournement.ArrayAdapters.TournamentPlayerAdapter;
@@ -50,11 +51,14 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
     static int cost;
     private static ArrayList<TournamentPlayer> players = new ArrayList<>();
     private static ArrayList<Double> prizes = new ArrayList<>();
+    private static TournamentTimer timer;
+    ListView playerListView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tournamentpreview);
+        playerListView = findViewById(R.id.playerintournament);
         blindstartTimeTextView = findViewById(R.id.blinds);
         getSupportLoaderManager().initLoader(GETPLAYERLOADER, null, TournamentPreview.this);
         final ListView playerListView = findViewById(R.id.playerintournament);
@@ -73,8 +77,8 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
                 findViewById(R.id.subMenuForPrizes).setVisibility(View.GONE);
                 start.setVisibility(View.GONE);
                 addPlayer.setVisibility(View.GONE);
-                TournamentTimer timer = new TournamentTimer(TournamentPreview.this, 15000, 1, rootView);
-                payoutListView.setVisibility(View.GONE);
+                timer = new TournamentTimer(TournamentPreview.this, 15000, 1, rootView);
+                //payoutListView.setVisibility(View.GONE);
                 timer.start();
                 playerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -190,7 +194,12 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
     @Override
     public void bust(int player) {
         TournamentPlayer playertoUpdate = players.get(player);
-        playertoUpdate.setmChipCount(0 - players.size() + numberofPlayersBusted);
+        if (playertoUpdate.getmChipCount() > 0)
+            playertoUpdate.setmChipCount(0 - players.size() + numberofPlayersBusted);
+        else {
+            Toast.makeText(this, "Cannot Bust an already busted player", Toast.LENGTH_SHORT).show();
+            return;
+        }
         numberofPlayersBusted++;
         Collections.sort(players);
         if (numberofPlayersBusted == players.size() - 1) endTournament();
@@ -199,7 +208,20 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
 
     @Override
     public void updatePlayer(int player, int count) {
-        players.get(player).setmChipCount(count);
+        TournamentPlayer toUpdate = players.get(player);
+        if (count == 0) {
+
+            //if the player is getting busted automatically redirect to the bust function which will eliminate the player from the tournament
+            //we also return as the bust function will also sort the data and updated the adapter.
+            bust(player);
+            return;
+        }
+
+        //checks to see if the player has already out.
+        if (toUpdate.getmChipCount() == 0) {
+            Toast.makeText(this, "Cannot update a player that is already out.", Toast.LENGTH_SHORT).show();
+        }
+        toUpdate.setmChipCount(count);
         Collections.sort(players);
         tournamentPlayerAdapter.notifyDataSetChanged();
     }
@@ -212,6 +234,12 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
         double win;
         ContentValues values = new ContentValues();
         playerInfo.moveToFirst();
+        timer.cancel();
+        findViewById(R.id.subMenuForPrizes).setVisibility(View.VISIBLE);
+        playerListView.setOnItemClickListener(null);
+        this.setTitle("Final Standings");
+        TextView round = findViewById(R.id.roundTracker);
+        round.setText("Congrats: " + players.get(0).getmName());
 
 
         for (int i = 0; i < players.size(); i++) {
@@ -233,7 +261,6 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
             String[] args = {String.valueOf(cursorID)};
             getContentResolver().update(uri, values, PokerContract.PlayerEntry._ID, args);
             playerInfo.moveToNext();
-
         }
     }
 }

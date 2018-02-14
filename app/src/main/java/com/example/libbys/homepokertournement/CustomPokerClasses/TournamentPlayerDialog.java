@@ -66,6 +66,11 @@ public class TournamentPlayerDialog extends DialogFragment {
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //if the input box is empty assume the user meant to cancel
+                if (chipCount.getText().toString().length() == 0) {
+                    dismiss();
+                    return;
+                }
                 int Count = Integer.parseInt(chipCount.getText().toString());
                 listener.updatePlayer(PlayertoUpdate, Count);
                 dismiss();

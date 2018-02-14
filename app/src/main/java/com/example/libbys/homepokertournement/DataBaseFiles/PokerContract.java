@@ -62,7 +62,12 @@ public final class PokerContract {
         public static final String PLAYER = "Player";
         //Represents the TournamentID;
         public static final String TOURNAMENT = "Tournament";
+        //Represents the position the player with ID finished in the tournament with ID
+        public static final String POSITION = "Position";
+        //represents the prize that player with ID earned in tournament with ID
+        public static final String PRIZE = "Prize";
         static final String TABLE_NAME = "PlayertoTournament";
+
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, TABLE_NAME);
 
     }

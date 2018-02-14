@@ -30,12 +30,6 @@ public class TournamentTimer extends CountDownTimer {
         mRoundTextView.setText(String.format(mContext.getApplicationContext().getString(R.string.Round), mRound));
         mBlindsTextView.setText(mContext.getString(R.string.Blinds, Blinds.DEFAULT_BLINDS1500[mRound - 1], Blinds.DEFAULT_BLINDS1500[mRound - 1] * 2));
         mrootView = rootView;
-        mTimeTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                start();
-            }
-        });
     }
 
 
