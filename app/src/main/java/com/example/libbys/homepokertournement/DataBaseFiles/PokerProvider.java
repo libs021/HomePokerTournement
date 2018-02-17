@@ -69,6 +69,11 @@ public class PokerProvider extends ContentProvider {
                 cursor = database.rawQuery(query, args);
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
+            case PLAYER_ID:
+                long id = ContentUris.parseId(uri);
+                String[] selectID = {String.valueOf(id)};
+                return database.query(PokerContract.PlayerEntry.TABLE_NAME, toSelect, PokerContract.PlayerEntry._ID + "=?", selectID, null, null, null);
+
         }
         return cursor;
     }
@@ -98,6 +103,7 @@ public class PokerProvider extends ContentProvider {
                 uri = Uri.withAppendedPath(PokerContract.BASE_CONTENT_URI, PokerContract.PATH_GETPLAYERBYTOURNAMENTID);
                 getContext().getContentResolver().notifyChange(uri, null);
                 return ContentUris.withAppendedId(uri, rowID);
+
         }
         return ContentUris.withAppendedId(uri, -1);
     }
@@ -113,13 +119,16 @@ public class PokerProvider extends ContentProvider {
         int numberOfRowsUpdated = 0;
         switch (sUriMatcher.match(uri)) {
             case PLAYER_ID:
-                s = s + "=?";
-                numberOfRowsUpdated = database.update(PokerContract.PlayerEntry.TABLE_NAME, contentValues, s, strings);
+                long id = ContentUris.parseId(uri);
+                String[] selectID = {String.valueOf(id)};
+                numberOfRowsUpdated = database.update(PokerContract.PlayerEntry.TABLE_NAME, contentValues, PokerContract.PlayerEntry._ID + "=?", selectID);
                 return numberOfRowsUpdated;
             case TOURNAMENT_ID:
                 s = s + "=?";
                 numberOfRowsUpdated = database.update(PokerContract.TournamentEntry.TABLE_NAME, contentValues, s, strings);
                 return numberOfRowsUpdated;
+            case PLAYERTOTOURNAMENT:
+                return database.update(PokerContract.PlayerToTournament.TABLE_NAME, contentValues, s, strings);
             default:
                 return numberOfRowsUpdated;
         }

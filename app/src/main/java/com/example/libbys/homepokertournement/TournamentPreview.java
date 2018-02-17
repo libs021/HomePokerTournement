@@ -45,14 +45,14 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
     static PayoutAdapter payoutAdapter;
     static int startingChipCount = 0;
     static int numberofPlayersBusted = 0;
-    static TextView blindstartTimeTextView;
-    static ArrayList<Integer> playerIDs = new ArrayList<>();
     static Cursor playerInfo;
     static int cost;
     private static ArrayList<TournamentPlayer> players = new ArrayList<>();
     private static ArrayList<Double> prizes = new ArrayList<>();
-    private static TournamentTimer timer;
+    TextView blindstartTimeTextView;
     ListView playerListView;
+    int tournAmentID;
+    private TournamentTimer timer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -138,7 +138,6 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
                         int playerID = cursor.getInt(cursor.getColumnIndex(PokerContract.PlayerEntry._ID));
                         TournamentPlayer playerToAdd = new TournamentPlayer(cursor.getString(cursor.getColumnIndex(PokerContract.PlayerEntry.NAME)), 0, playerID);
                         players.add(playerToAdd);
-                        playerIDs.add(playerID);
                     } while (cursor.moveToNext());
                 }
                 //this eliminates the race condition when both loaders kicked off at the same time. Since the Tournement info gets
@@ -150,6 +149,7 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
             case GETTOURNAMENTINFO:
                 cursor.moveToFirst();
                 prizes.clear();
+                tournAmentID = cursor.getInt(cursor.getColumnIndex(PokerContract.TournamentEntry._ID));
                 startingChipCount = cursor.getInt(cursor.getColumnIndex(PokerContract.TournamentEntry.STARTINGCHIPS));
                 String startTime = cursor.getString(cursor.getColumnIndex(PokerContract.TournamentEntry.STARTTIME));
                 if (players.size() != 0) {
@@ -227,40 +227,53 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
     }
 
     public void endTournament() {
-        int cursorID;
         int cursorBuyin;
         double cursorCashout;
         int cursorPlayed;
         double win;
         ContentValues values = new ContentValues();
-        playerInfo.moveToFirst();
         timer.cancel();
         findViewById(R.id.subMenuForPrizes).setVisibility(View.VISIBLE);
         playerListView.setOnItemClickListener(null);
         this.setTitle("Final Standings");
         TextView round = findViewById(R.id.roundTracker);
         round.setText("Congrats: " + players.get(0).getmName());
+        String[] querySelect = {PokerContract.PlayerEntry.CASHOUT, PokerContract.PlayerEntry.BUYIN, PokerContract.PlayerEntry.PLAYED};
 
 
         for (int i = 0; i < players.size(); i++) {
             values.clear();
             cursorCashout = 0;
+            Long playerID = (long) players.get(i).getmID();
+            Uri uri = ContentUris.withAppendedId(PokerContract.PlayerEntry.CONTENT_URI, playerID);
+            Cursor playerToUpdate = getContentResolver().query(uri, querySelect, null, null, null);
+            playerToUpdate.moveToFirst();
             if (i < prizes.size()) {
-                cursorCashout = playerInfo.getInt(playerInfo.getColumnIndex(PokerContract.PlayerEntry.CASHOUT)) + prizes.get(i);
+                cursorCashout = playerToUpdate.getInt(playerToUpdate.getColumnIndex(PokerContract.PlayerEntry.CASHOUT)) + prizes.get(i);
                 values.put(PokerContract.PlayerEntry.CASHOUT, cursorCashout);
+                //updates the tournament to player table with the prize won one this tournament
+                //i + one as the array starts at 0 and our winner should be number 1.
+                updateTournamentToPlayer(playerID, tournAmentID, i + 1, prizes.get(i));
             }
-            cursorBuyin = playerInfo.getInt(playerInfo.getColumnIndex(PokerContract.PlayerEntry.BUYIN)) + cost;
+            //Player didn't get a prize :(
+            else updateTournamentToPlayer(playerID, tournAmentID, i, 0);
+            cursorBuyin = playerToUpdate.getInt(playerToUpdate.getColumnIndex(PokerContract.PlayerEntry.BUYIN)) + cost;
             values.put(PokerContract.PlayerEntry.BUYIN, cursorBuyin);
-            cursorPlayed = playerInfo.getInt(playerInfo.getColumnIndex(PokerContract.PlayerEntry.PLAYED)) + 1;
+            cursorPlayed = playerToUpdate.getInt(playerToUpdate.getColumnIndex(PokerContract.PlayerEntry.PLAYED)) + 1;
             values.put(PokerContract.PlayerEntry.PLAYED, cursorPlayed);
-            win = playerInfo.getInt(playerInfo.getColumnIndex(PokerContract.PlayerEntry.WIN)) + (cursorCashout - cursorBuyin);
+            win = cursorCashout - cursorBuyin;
             values.put(PokerContract.PlayerEntry.WIN, win);
-            cursorID = players.get(i).getmID();
-            Uri uri = Uri.withAppendedPath(PokerContract.BASE_CONTENT_URI, PokerContract.PATH_PLAYERS);
-            uri = ContentUris.withAppendedId(uri, cursorID);
-            String[] args = {String.valueOf(cursorID)};
-            getContentResolver().update(uri, values, PokerContract.PlayerEntry._ID, args);
-            playerInfo.moveToNext();
+            getContentResolver().update(uri, values, null, null);
         }
+    }
+
+    private void updateTournamentToPlayer(long player, int tournament, int place, double prize) {
+        ContentValues values = new ContentValues();
+        values.put(PokerContract.PlayerToTournament.POSITION, place);
+        values.put(PokerContract.PlayerToTournament.PRIZE, prize);
+        Uri uri = PokerContract.PlayerToTournament.CONTENT_URI;
+        String selection = PokerContract.PlayerToTournament.PLAYER + "=? and " + PokerContract.PlayerToTournament.TOURNAMENT + "=?";
+        String[] args = {String.valueOf(place), String.valueOf(tournament)};
+        getContentResolver().update(uri, values, selection, args);
     }
 }
