@@ -54,12 +54,10 @@ public class PokerProvider extends ContentProvider {
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
             case TOURNAMENT:
-                selection = selection + "> ? ";
                 cursor = database.query(PokerContract.TournamentEntry.TABLE_NAME, toSelect, selection, args, null, null, sort);
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
             case TOURNAMENT_ID:
-                selection = selection + "= ? ";
                 return database.query(PokerContract.TournamentEntry.TABLE_NAME, toSelect, selection, args, null, null, null);
             case PLAYERBYTOURNAMENTID:
                 String query = "Select * from " + PokerContract.PlayerEntry.TABLE_NAME + " Left join " + PokerContract.PlayerToTournament.TABLE_NAME +

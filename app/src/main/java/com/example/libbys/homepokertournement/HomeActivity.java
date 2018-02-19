@@ -92,8 +92,9 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         Calendar c = Calendar.getInstance();
         Date today = c.getTime();
         String time = databaseHelper.DATABASE_DATE_FORMAT.format(today);
+        String selection = PokerContract.TournamentEntry.STARTTIME + ">?";
         String[] selectionArgs = {time};
-        return new android.support.v4.content.CursorLoader(this, PokerContract.TournamentEntry.CONTENT_URI, toSelect, PokerContract.TournamentEntry.STARTTIME,
+        return new android.support.v4.content.CursorLoader(this, PokerContract.TournamentEntry.CONTENT_URI, toSelect, selection,
                 selectionArgs, PokerContract.TournamentEntry.STARTTIME);
     }
 

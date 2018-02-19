@@ -47,6 +47,8 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
     static int numberofPlayersBusted = 0;
     static Cursor playerInfo;
     static int cost;
+    static Long millsRemain;
+    static int round;
     private static ArrayList<TournamentPlayer> players = new ArrayList<>();
     private static ArrayList<Double> prizes = new ArrayList<>();
     TextView blindstartTimeTextView;
@@ -54,13 +56,19 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
     int tournAmentID;
     private TournamentTimer timer;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tournamentpreview);
+        if (millsRemain == null) {
+            millsRemain = (long) 1500;
+            round = 1;
+        }
         playerListView = findViewById(R.id.playerintournament);
         blindstartTimeTextView = findViewById(R.id.blinds);
-        getSupportLoaderManager().initLoader(GETPLAYERLOADER, null, TournamentPreview.this);
+        if (players.isEmpty())
+            getSupportLoaderManager().initLoader(GETPLAYERLOADER, null, TournamentPreview.this);
         final ListView playerListView = findViewById(R.id.playerintournament);
         tournamentPlayerAdapter = new TournamentPlayerAdapter(this, R.layout.playerintournamentlistview, players);
         playerListView.setAdapter(tournamentPlayerAdapter);
@@ -69,15 +77,15 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
         payoutListView.setAdapter(payoutAdapter);
         final Button addPlayer = findViewById(R.id.addPlayertournament);
         final Button start = findViewById(R.id.startTournament);
+        View rootView = findViewById(R.id.rootViewTournamentpreview);
+        timer = new TournamentTimer(TournamentPreview.this, millsRemain, round, rootView);
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 findViewById(R.id.roundTracker).setVisibility(View.VISIBLE);
-                View rootView = findViewById(R.id.rootViewTournamentpreview);
                 findViewById(R.id.subMenuForPrizes).setVisibility(View.GONE);
                 start.setVisibility(View.GONE);
                 addPlayer.setVisibility(View.GONE);
-                timer = new TournamentTimer(TournamentPreview.this, 15000, 1, rootView);
                 //payoutListView.setVisibility(View.GONE);
                 timer.start();
                 playerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -107,25 +115,33 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         Uri fromPreviousActivity = getIntent().getData();
-        String tournamentID = fromPreviousActivity.getLastPathSegment();
-        Long id = Long.parseLong(tournamentID);
-        String[] selectionArgs = {tournamentID};
+        Long tournamentID = ContentUris.parseId(fromPreviousActivity);
+        String[] selectionArgs = {String.valueOf(tournamentID)};
 
         switch (i) {
             case GETPLAYERLOADER:
                 Uri toquery = Uri.withAppendedPath(PokerContract.BASE_CONTENT_URI, PokerContract.PATH_GETPLAYERBYTOURNAMENTID);
-                toquery = withAppendedId(toquery, id);
+                toquery = withAppendedId(toquery, tournamentID);
                 return new android.support.v4.content.CursorLoader(this, toquery, null, null, selectionArgs, null);
             case GETTOURNAMENTINFO:
                 String[] toSelect = {PokerContract.TournamentEntry._ID, PokerContract.TournamentEntry.STARTINGCHIPS, PokerContract.TournamentEntry.STARTTIME,
                         PokerContract.TournamentEntry.COST};
                 Uri query = Uri.withAppendedPath(PokerContract.BASE_CONTENT_URI, PokerContract.PATH_TOURNAMENT);
-                query = withAppendedId(query, id);
-                return new android.support.v4.content.CursorLoader(this, query, toSelect, PokerContract.TournamentEntry._ID, selectionArgs, null);
+                String selection = PokerContract.TournamentEntry._ID + "=?";
+                query = withAppendedId(query, tournamentID);
+                return new android.support.v4.content.CursorLoader(this, query, toSelect, selection, selectionArgs, null);
             default:
                 return null;
 
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        millsRemain = timer.getMillsRemain();
+        round = timer.getRound();
+        timer.cancel();
     }
 
     @Override
@@ -264,6 +280,7 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
             win = cursorCashout - cursorBuyin;
             values.put(PokerContract.PlayerEntry.WIN, win);
             getContentResolver().update(uri, values, null, null);
+            playerToUpdate.close();
         }
     }
 
@@ -273,7 +290,7 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
         values.put(PokerContract.PlayerToTournament.PRIZE, prize);
         Uri uri = PokerContract.PlayerToTournament.CONTENT_URI;
         String selection = PokerContract.PlayerToTournament.PLAYER + "=? and " + PokerContract.PlayerToTournament.TOURNAMENT + "=?";
-        String[] args = {String.valueOf(place), String.valueOf(tournament)};
+        String[] args = {String.valueOf(player), String.valueOf(tournament)};
         getContentResolver().update(uri, values, selection, args);
     }
 }
