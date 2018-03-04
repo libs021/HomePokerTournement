@@ -37,7 +37,7 @@ import static android.content.ContentUris.withAppendedId;
 /**
  * This will manage individual Tournaments prior to tournament starting will allow you to add players. Once the tournament starts you can update the chip counts.
  */
-
+//TODO break this activity up into two
 public class TournamentPreview extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, TournamentPlayerDialog.TournamentPlayerInterface {
     private static final int GETPLAYERLOADER = 10;
     private static final int GETTOURNAMENTINFO = 17;
@@ -49,25 +49,22 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
     static int cost;
     static Long millsRemain;
     static int round;
+    static int tournAmentID;
     private static ArrayList<TournamentPlayer> players = new ArrayList<>();
     private static ArrayList<Double> prizes = new ArrayList<>();
+    private static TournamentTimer timer;
     TextView blindstartTimeTextView;
     ListView playerListView;
-    int tournAmentID;
-    private TournamentTimer timer;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tournamentpreview);
-        if (millsRemain == null) {
-            millsRemain = (long) 1500;
-            round = 1;
-        }
         playerListView = findViewById(R.id.playerintournament);
         blindstartTimeTextView = findViewById(R.id.blinds);
-        if (players.isEmpty())
+        Uri uri = getIntent().getData();
+        int id = (int) ContentUris.parseId(uri);
+        if (players.isEmpty() && id != tournAmentID) ;
             getSupportLoaderManager().initLoader(GETPLAYERLOADER, null, TournamentPreview.this);
         final ListView playerListView = findViewById(R.id.playerintournament);
         tournamentPlayerAdapter = new TournamentPlayerAdapter(this, R.layout.playerintournamentlistview, players);
@@ -77,16 +74,24 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
         payoutListView.setAdapter(payoutAdapter);
         final Button addPlayer = findViewById(R.id.addPlayertournament);
         final Button start = findViewById(R.id.startTournament);
-        View rootView = findViewById(R.id.rootViewTournamentpreview);
-        timer = new TournamentTimer(TournamentPreview.this, millsRemain, round, rootView);
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                View rootView = findViewById(R.id.rootViewTournamentpreview);
                 findViewById(R.id.roundTracker).setVisibility(View.VISIBLE);
                 findViewById(R.id.subMenuForPrizes).setVisibility(View.GONE);
                 start.setVisibility(View.GONE);
                 addPlayer.setVisibility(View.GONE);
                 //payoutListView.setVisibility(View.GONE);
+                if (millsRemain == null) {
+                    millsRemain = (long) 12000; //20 minutes 15 minutes = 900000
+                    round = 1;
+                } else {
+                    millsRemain = timer.getMillsRemain();
+                    round = timer.getRound();
+                    timer.cancel();
+                }
+                timer = new TournamentTimer(TournamentPreview.this, millsRemain, round, rootView);
                 timer.start();
                 playerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -136,13 +141,13 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
         }
     }
 
-    @Override
+    /**@Override
     protected void onStop() {
         super.onStop();
         millsRemain = timer.getMillsRemain();
         round = timer.getRound();
         timer.cancel();
-    }
+    }**/
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {

@@ -27,7 +27,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Home Screen for the App, Loads some buttons, as well as lists the most upcoming tournaments.
+ * Home Screen for the App, Loads some buttons, as well as lists the upcoming tournaments.
  */
 
 public class HomeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, NewPlayerDialog.NewPlayerInterface {
@@ -109,7 +109,7 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
 
-    //no need to check for null as the fragment checks this.
+    //This is the callback called from our dialog that gives us the player name.
     @Override
     public void add(String name) {
         ContentValues values = new ContentValues();

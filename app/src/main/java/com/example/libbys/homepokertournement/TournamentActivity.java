@@ -3,6 +3,7 @@ package com.example.libbys.homepokertournement;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
@@ -52,7 +53,7 @@ public class TournamentActivity extends AppCompatActivity {
         });
     }
 
-    //sets on touchLister t
+    //sets on touchLister
     private void setUpCalenderPicker(final EditText editText) {
         final DatePickerDialog.OnDateSetListener DataListener = (new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -131,6 +132,7 @@ public class TournamentActivity extends AppCompatActivity {
 
 
         //No need to enter anything if the user doesn't put anything here, the database is set up to insert a defualt value if no value is present.
+        //ToDo move all of the error checking to the content provided
         if (startingChipsString.length() != 0) {
             int chips = Integer.parseInt(startingChipsString);
             newTournament.put(PokerContract.TournamentEntry.STARTINGCHIPS, chips);
@@ -140,16 +142,16 @@ public class TournamentActivity extends AppCompatActivity {
             return;
         }
         String dateTime = date + " " + time;
-        newTournament.put(PokerContract.TournamentEntry.GAME, game);
-        newTournament.put(PokerContract.TournamentEntry.STARTTIME, dateTime);
-        newTournament.put(PokerContract.TournamentEntry.COST, costString);
-        if (!verifyData(newTournament)) {
+        if (!verifyData(dateTime)) {
             Toast.makeText(this, "Tournament Must Start in the future.", Toast.LENGTH_LONG).show();
             return;
         }
+        newTournament.put(PokerContract.TournamentEntry.GAME, game);
+        newTournament.put(PokerContract.TournamentEntry.STARTTIME, dateTime);
+        newTournament.put(PokerContract.TournamentEntry.COST, costString);
         Uri uri = getContentResolver().insert(PokerContract.TournamentEntry.CONTENT_URI, newTournament);
-        String id = uri.getLastPathSegment();
-        if (!id.equals("-1")) {
+        Long id = ContentUris.parseId(uri);
+        if (id != -1) {
             Toast.makeText(this, "Your entered in Tournament with ID " + id, Toast.LENGTH_LONG).show();
             Intent intent = new Intent(TournamentActivity.this, PlayerListActivity.class);
             intent.setData(uri);
@@ -161,12 +163,11 @@ public class TournamentActivity extends AppCompatActivity {
         }
     }
 
-    private boolean verifyData(ContentValues values) {
-        String time = values.getAsString(PokerContract.TournamentEntry.STARTTIME);
+    private boolean verifyData(String dateTime) {
         Calendar c = Calendar.getInstance();
         Date today = c.getTime();
         try {
-            Date d = databaseHelper.DATABASE_DATE_FORMAT.parse(time);
+            Date d = databaseHelper.DATABASE_DATE_FORMAT.parse(dateTime);
             if (d.after(today)) return true;
         } catch (java.text.ParseException e) {
             e.printStackTrace();

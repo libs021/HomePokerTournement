@@ -12,12 +12,9 @@ import com.example.libbys.homepokertournement.R;
  */
 
 public class TournamentTimer extends CountDownTimer {
-    private int mRound;
-    private TextView mBlindsTextView;
-    private TextView mTimeTextView;
-    private TextView mRoundTextView;
+    private TextView mBlindsTextView, mTimeTextView, mRoundTextView;
     private Context mContext;
-    private int numberOfBreaks = 0;
+    private int mRound, numberOfBreaks = 0;
     private long millsRemain;
 
     public TournamentTimer(Context context, long timeLimit, int round, View rootView) {

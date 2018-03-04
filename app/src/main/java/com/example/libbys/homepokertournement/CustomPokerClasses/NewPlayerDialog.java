@@ -60,6 +60,7 @@ public class NewPlayerDialog extends DialogFragment {
                     Toast.makeText(getActivity(), getString(R.string.PlayerNameError), Toast.LENGTH_LONG).show();
                     return;
                 }
+                //calls back to the calling activity with the player name to get added to the database.
                 listener.add(name);
                 dismiss();
             }

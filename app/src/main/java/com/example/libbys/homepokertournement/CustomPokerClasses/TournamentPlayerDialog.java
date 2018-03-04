@@ -56,6 +56,7 @@ public class TournamentPlayerDialog extends DialogFragment {
         update = view.findViewById(R.id.updateButton);
         bust = view.findViewById(R.id.bustButton);
         chipCount = view.findViewById(R.id.newChipCount);
+        //will just be passed back to the calling activity
         PlayertoUpdate = getArguments().getInt("PlayerToUpdate");
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,13 +67,17 @@ public class TournamentPlayerDialog extends DialogFragment {
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String input = chipCount.getText().toString();
                 //if the input box is empty assume the user meant to cancel
-                if (chipCount.getText().toString().length() == 0) {
+                if (input.length() == 0) {
                     dismiss();
                     return;
                 }
-                int Count = Integer.parseInt(chipCount.getText().toString());
-                listener.updatePlayer(PlayertoUpdate, Count);
+
+                int Count = Integer.parseInt(input);
+                //If the user input 0 assume they wanted to bust the player
+                if (Count == 0) listener.bust(PlayertoUpdate);
+                else listener.updatePlayer(PlayertoUpdate, Count);
                 dismiss();
             }
         });
@@ -88,8 +93,10 @@ public class TournamentPlayerDialog extends DialogFragment {
     }
 
     public interface TournamentPlayerInterface {
+        //Bust the player out of the tournament
         void bust(int player);
 
+        //Update the players chip count
         void updatePlayer(int player, int count);
     }
 }

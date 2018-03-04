@@ -17,6 +17,11 @@ import android.widget.ListView;
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerPlayerCursorAdapter;
 
+
+/**
+ * Will list all of the poker players in the app and show some basic info about as of now it will just list them.
+ * you can also add players to a tournament on this screen
+ */
 public class PlayerListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     PokerPlayerCursorAdapter cursorAdapter = new PokerPlayerCursorAdapter(this, null, 0);
     Boolean[] isItemSelected;
@@ -35,6 +40,7 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    //TODO find a better way to handle show and get what items are selected
                     if (!isItemSelected[i])
                         view.setBackgroundColor(getColor(R.color.colorPrimaryDark));
                     else view.setBackgroundColor(0x00000);
@@ -120,15 +126,16 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
                 String ID = uri.getLastPathSegment();
                 int toID = Integer.parseInt(ID);
                 ContentValues values = new ContentValues();
+                Cursor items = cursorAdapter.getCursor();
+                items.moveToFirst();
                 for (int i = 0; i < cursorAdapter.getCount(); i++) {
                     if (isItemSelected[i]) {
-                        Cursor items = cursorAdapter.getCursor();
-                        items.moveToPosition(i);
                         int playerID = items.getInt(items.getColumnIndex(PokerContract.PlayerEntry._ID));
                         values.put(PokerContract.PlayerToTournament.TOURNAMENT, toID);
                         values.put(PokerContract.PlayerToTournament.PLAYER, playerID);
                         getContentResolver().insert(PokerContract.PlayerToTournament.CONTENT_URI, values);
                         values.clear();
+                        items.moveToNext();
                     }
                 }
                 finish();

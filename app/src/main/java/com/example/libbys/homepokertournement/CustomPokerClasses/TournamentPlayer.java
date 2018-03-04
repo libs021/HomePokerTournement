@@ -44,6 +44,6 @@ public class TournamentPlayer implements Comparable<TournamentPlayer> {
     //This allows the built in collections to sort the tournament players by chip count.
     //if you want to add additional ways to sort players you will need to use comperator.
     public int compareTo(@NonNull TournamentPlayer tournamentPlayer) {
-        return tournamentPlayer.getmChipCount() - this.getmChipCount();
+        return tournamentPlayer.getmChipCount() - this.mChipCount;
     }
 }
