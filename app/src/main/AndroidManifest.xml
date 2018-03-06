@@ -30,6 +30,10 @@
             android:name=".TournamentPreview"
             android:label="@string/tournamentPreview"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".TournamentInProgress"
+            android:label="@string/tournamentInProgress"
+            android:theme="@style/AppTheme" />
         <provider
             android:name=".DataBaseFiles.PokerProvider"
             android:authorities="com.example.libbys.homepokertournement"

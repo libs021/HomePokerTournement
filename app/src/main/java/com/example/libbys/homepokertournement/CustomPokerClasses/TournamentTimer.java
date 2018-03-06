@@ -21,11 +21,17 @@ public class TournamentTimer extends CountDownTimer {
         super(timeLimit, 1000);
         mContext = context;
         mRound = round;
-        mBlindsTextView = rootView.findViewById(R.id.blinds);
-        mTimeTextView = rootView.findViewById(R.id.timer);
-        mRoundTextView = rootView.findViewById(R.id.roundTracker);
+        numberOfBreaks = mRound / 4;
+        mBlindsTextView = rootView.findViewById(R.id.tv_blinds);
+        mTimeTextView = rootView.findViewById(R.id.tv_timer);
+        mRoundTextView = rootView.findViewById(R.id.tv_round);
         mRoundTextView.setText(String.format(mContext.getApplicationContext().getString(R.string.Round), mRound));
         mBlindsTextView.setText(mContext.getString(R.string.Blinds, Blinds.DEFAULT_BLINDS1500[mRound - 1], Blinds.DEFAULT_BLINDS1500[mRound - 1] * 2));
+        if (mRound - numberOfBreaks + 2 > Blinds.DEFAULT_BLINDS1500.length) {
+            mTimeTextView.setText("OverTime");
+            return;
+        }
+
     }
 
 
