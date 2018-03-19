@@ -9,7 +9,6 @@ import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -27,20 +26,18 @@ import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static android.content.ContentValues.TAG;
 
 /**
  * Keeps track of a tournament that is in progress. All info will be handed over by previous activity.
  */
 
 public class TournamentInProgress extends AppCompatActivity implements TournamentPlayerDialog.TournamentPlayerInterface {
+    private static TournamentTimer timer;
     private ArrayList<TournamentPlayer> players;
     private TournamentPlayerAdapter adapter;
-    private TournamentTimer timer;
     private int numberofPlayersBusted;
     private long tournAmentID;
     private ListView listView;
-    private ArrayList<Double> prizes;
     private int cost;
 
 
@@ -51,20 +48,19 @@ public class TournamentInProgress extends AppCompatActivity implements Tournamen
         LinearLayout rootView = findViewById(R.id.ll_roottournamentinprogress);
         if (savedInstanceState == null) {
             players = getIntent().getParcelableArrayListExtra("PlayersList");
-            timer = new TournamentTimer(this, 15000, 1, rootView);
+            timer = new TournamentTimer(this, rootView);
             numberofPlayersBusted = 0;
             cost = getIntent().getIntExtra("Cost", 0);
         } else {
             players = savedInstanceState.getParcelableArrayList("PlayersList");
-            long millisRemain = savedInstanceState.getLong("MillisRemain");
-            int round = savedInstanceState.getInt("Round");
-            timer = new TournamentTimer(this, millisRemain, round, rootView);
-            Log.e(TAG, "onCreate: Hello" + millisRemain);
+            TextView blinds = rootView.findViewById(R.id.tv_blinds);
+            TextView time = rootView.findViewById(R.id.tv_timer);
+            TextView round = rootView.findViewById(R.id.tv_round);
+            timer.update(blinds, time, round, this);
             numberofPlayersBusted = savedInstanceState.getInt("Busted");
             cost = savedInstanceState.getInt("Cost");
         }
         tournAmentID = ContentUris.parseId(getIntent().getData());
-        timer.start();
         adapter = new TournamentPlayerAdapter(this, R.layout.playerintournamentlistview, players);
         listView = findViewById(R.id.lv_players);
         listView.setAdapter(adapter);
@@ -109,11 +105,6 @@ public class TournamentInProgress extends AppCompatActivity implements Tournamen
     }
 
     /**
-     * This is the same as {@link #onSaveInstanceState} but is called for activities
-     * created with the attribute {@link android.R.attr#persistableMode} set to
-     * <code>persistAcrossReboots</code>. The {@link PersistableBundle} passed
-     * in will be saved and presented in {@link #onCreate(Bundle, PersistableBundle)}
-     * the first time that this activity is restarted following the next device reboot.
      *
      * @param outState Bundle in which to place your saved state.
      * @see #onSaveInstanceState(Bundle)
@@ -125,12 +116,8 @@ public class TournamentInProgress extends AppCompatActivity implements Tournamen
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList("PlayersList", players);
-        outState.putLong("MillisRemain", timer.getMillsRemain());
-        Log.e(TAG, "onSaveInstanceState: " + timer.getMillsRemain());
-        outState.putInt("Round", timer.getRound());
         outState.putInt("Busted", numberofPlayersBusted);
         outState.putInt("Cost", cost);
-        timer.cancel();
     }
 
     public void endTournament() {
@@ -139,17 +126,19 @@ public class TournamentInProgress extends AppCompatActivity implements Tournamen
         int cursorPlayed;
         double win;
         ContentValues values = new ContentValues();
-        timer.cancel();
         listView.setOnItemClickListener(null);
         this.setTitle("Final Standings");
         TextView round = findViewById(R.id.tv_round);
-        round.setText("Congrats: " + players.get(0).getmName());
+        String congrats = getString(R.string.Congrats, players.get(0).getmName());
+        round.setText(congrats);
         String[] querySelect = {PokerContract.PlayerEntry.CASHOUT, PokerContract.PlayerEntry.BUYIN, PokerContract.PlayerEntry.PLAYED};
 
         double payoutPercent[] = PayOuts.getPayoutPercentages(players.size());
-        ArrayList<Double> returnVal = new ArrayList<>();
+        ArrayList<Double> prizes = new ArrayList<>();
         for (int i = 0; i < payoutPercent.length; i++)
-            returnVal.add(payoutPercent[i] * players.size() * cost);
+            //we populate the prizes array at the end of the tournament, so in future development
+            //we can add rebuy funtions
+            prizes.add(payoutPercent[i] * players.size() * cost);
         for (int i = 0; i < players.size(); i++) {
             values.clear();
             cursorCashout = 0;

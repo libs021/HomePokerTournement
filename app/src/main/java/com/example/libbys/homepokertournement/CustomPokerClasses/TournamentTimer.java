@@ -1,74 +1,101 @@
 package com.example.libbys.homepokertournement.CustomPokerClasses;
 
 import android.content.Context;
-import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.TextView;
 
 import com.example.libbys.homepokertournement.R;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * Manages a timer used to move onto the next round
  */
 
-public class TournamentTimer extends CountDownTimer {
+public class TournamentTimer {
     private TextView mBlindsTextView, mTimeTextView, mRoundTextView;
     private Context mContext;
-    private int mRound, numberOfBreaks = 0;
-    private long millsRemain;
+    private int mRound, seconds, minutes;
+    private boolean onBreak;
+    private Timer timer;
 
-    public TournamentTimer(Context context, long timeLimit, int round, View rootView) {
-        super(timeLimit, 1000);
-        mContext = context;
-        mRound = round;
-        numberOfBreaks = mRound / 4;
+    public TournamentTimer(Context context, View rootView) {
+        mRound = 1;
+        seconds = 0;
+        minutes = 0;
         mBlindsTextView = rootView.findViewById(R.id.tv_blinds);
         mTimeTextView = rootView.findViewById(R.id.tv_timer);
         mRoundTextView = rootView.findViewById(R.id.tv_round);
-        mRoundTextView.setText(String.format(mContext.getApplicationContext().getString(R.string.Round), mRound));
-        mBlindsTextView.setText(mContext.getString(R.string.Blinds, Blinds.DEFAULT_BLINDS1500[mRound - 1], Blinds.DEFAULT_BLINDS1500[mRound - 1] * 2));
-        if (mRound - numberOfBreaks + 2 > Blinds.DEFAULT_BLINDS1500.length) {
-            mTimeTextView.setText("OverTime");
-            return;
-        }
-
+        timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                updateSeconds();
+            }
+        };
+        timer.scheduleAtFixedRate(task, 0, 1000);
+        mContext = context;
     }
 
-
-    @Override
-    public void onTick(long millisUntilFinished) {
-        long minutesLeft = millisUntilFinished / 60000;
-        long secondsLeft = (millisUntilFinished % 60000) / 1000;
-        millsRemain = millisUntilFinished;
-        String timeLeft;
-        if (secondsLeft >= 10)
-            timeLeft = mContext.getString(R.string.TimeLeft, minutesLeft, secondsLeft);
-        else timeLeft = mContext.getString(R.string.TimeLeftWithPadding, minutesLeft, secondsLeft);
-        mTimeTextView.setText(timeLeft);
+    public void update(TextView blinds, TextView timer, TextView round, Context context) {
+        mBlindsTextView = blinds;
+        mTimeTextView = timer;
+        mRoundTextView = round;
+        mContext = context;
+        updateRoundTextView();
     }
 
-    public void onFinish() {
-        mRoundTextView.setText(String.format(mContext.getApplicationContext().getString(R.string.Round), mRound - numberOfBreaks + 1));
-        mBlindsTextView.setText(mContext.getString(R.string.Blinds, Blinds.DEFAULT_BLINDS1500[mRound - numberOfBreaks], Blinds.DEFAULT_BLINDS1500[mRound - numberOfBreaks] * 2));
-        //Will Keep cycling through until round 15 where the blinds will not keep rising.
-        if (mRound - numberOfBreaks + 2 > Blinds.DEFAULT_BLINDS1500.length) {
-            mTimeTextView.setText("OverTime");
-            return;
+    private void updateSeconds() {
+        if (seconds != 0) seconds--;
+        else {
+            updateMinutes();
+            seconds = 59;
         }
-        mRound++;
-        if (mRound % 4 == 0) {
+        updateTimeView();
+    }
+
+    private void updateMinutes() {
+        if (minutes != 0) minutes--;
+        else {
+            minutes = 20;
+            updateRound();
+        }
+    }
+
+    private void updateRound() {
+        if (mRound % 3 == 0 && !onBreak) {
             mRoundTextView.setText(R.string.Break);
-            numberOfBreaks++;
-
+            onBreak = true;
+        } else {
+            if (mRound == Blinds.DEFAULT_BLINDS1500.length) {
+                stopTimer();
+                return;
+            }
+            mRound++;
+            onBreak = false;
+            updateRoundTextView();
         }
-        this.start();
     }
 
-    public long getMillsRemain() {
-        return millsRemain;
+    private void updateTimeView() {
+        if (seconds < 10)
+            mTimeTextView.setText(mContext.getString(R.string.TimeLeftWithPadding, minutes, seconds));
+        else mTimeTextView.setText(mContext.getString(R.string.TimeLeft, minutes, seconds));
     }
 
-    public int getRound() {
-        return mRound;
+    private void stopTimer() {
+        timer.cancel();
+        mRoundTextView.setText(R.string.Overtime);
+    }
+
+    private void updateRoundTextView() {
+        if (onBreak) {
+            mRoundTextView.setText(R.string.Break);
+            return;
+        }
+        mRoundTextView.setText(mContext.getString(R.string.Round, mRound));
+        int smallBlind = Blinds.DEFAULT_BLINDS1500[mRound - 1];
+        mBlindsTextView.setText(mContext.getString(R.string.Blinds, smallBlind, smallBlind * 2));
     }
 }
