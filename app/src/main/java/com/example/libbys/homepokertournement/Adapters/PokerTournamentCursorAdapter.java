@@ -1,4 +1,4 @@
-package com.example.libbys.homepokertournement.DataBaseFiles;
+package com.example.libbys.homepokertournement.Adapters;
 
 
 import android.content.Context;
@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
+import com.example.libbys.homepokertournement.DataBaseFiles.databaseHelper;
 import com.example.libbys.homepokertournement.R;
 
 import java.text.ParseException;

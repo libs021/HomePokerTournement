@@ -18,9 +18,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.libbys.homepokertournement.Adapters.PokerTournamentCursorAdapter;
 import com.example.libbys.homepokertournement.CustomPokerClasses.NewPlayerDialog;
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
-import com.example.libbys.homepokertournement.DataBaseFiles.PokerTournamentCursorAdapter;
 import com.example.libbys.homepokertournement.DataBaseFiles.databaseHelper;
 
 import java.util.Calendar;

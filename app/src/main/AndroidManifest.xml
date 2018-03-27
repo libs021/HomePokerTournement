@@ -34,6 +34,10 @@
             android:name=".TournamentInProgress"
             android:label="@string/tournamentInProgress"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".PlayerResultsActivity"
+            android:label="Player Results"
+            android:theme="@style/AppTheme" />
         <provider
             android:name=".DataBaseFiles.PokerProvider"
             android:authorities="com.example.libbys.homepokertournement"

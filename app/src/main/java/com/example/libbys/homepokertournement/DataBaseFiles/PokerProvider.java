@@ -9,6 +9,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * {@link ContentProvider} for PokerApp app.
@@ -22,6 +25,7 @@ public class PokerProvider extends ContentProvider {
     private static final int TOURNAMENT = 200;
     private static final int TOURNAMENT_ID = 201;
     private static final int PLAYERTOTOURNAMENT = 300;
+    private static final int PLAYERTOTOURNAMENT_PLAYERID = 301;
     private static final int PLAYERBYTOURNAMENTID = 550;
     private static UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
@@ -32,6 +36,7 @@ public class PokerProvider extends ContentProvider {
         sUriMatcher.addURI(PokerContract.CONTENT_AUTHORITY, PokerContract.PATH_TOURNAMENT + "/#", TOURNAMENT_ID);
         sUriMatcher.addURI(PokerContract.CONTENT_AUTHORITY, PokerContract.PATH_PLAYERTOTOURNAMENT, PLAYERTOTOURNAMENT);
         sUriMatcher.addURI(PokerContract.CONTENT_AUTHORITY, PokerContract.PATH_GETPLAYERBYTOURNAMENTID + "/#", PLAYERBYTOURNAMENTID);
+        sUriMatcher.addURI(PokerContract.CONTENT_AUTHORITY, PokerContract.PATH_PLAYERTOTOURNAMENT + "/#", PLAYERTOTOURNAMENT_PLAYERID);
     }
 
     private databaseHelper db;
@@ -47,6 +52,8 @@ public class PokerProvider extends ContentProvider {
     public Cursor query(@NonNull Uri uri, @Nullable String[] toSelect, @Nullable String selection, @Nullable String[] args, @Nullable String sort) {
         SQLiteDatabase database = db.getReadableDatabase();
         Cursor cursor = null;
+        Long id;
+        Log.e(TAG, "query: " + sUriMatcher.match(uri));
         switch (sUriMatcher.match(uri)) {
             case PLAYER:
                 //Allows the cursor to be notified when the data changes, so it will refresh its data.
@@ -68,10 +75,15 @@ public class PokerProvider extends ContentProvider {
                 cursor.setNotificationUri(getContext().getContentResolver(), uri);
                 return cursor;
             case PLAYER_ID:
-                long id = ContentUris.parseId(uri);
+                id = ContentUris.parseId(uri);
                 String[] selectID = {String.valueOf(id)};
                 return database.query(PokerContract.PlayerEntry.TABLE_NAME, toSelect, PokerContract.PlayerEntry._ID + "=?", selectID, null, null, null);
-
+            case PLAYERTOTOURNAMENT_PLAYERID:
+                id = ContentUris.parseId((uri));
+                String[] select = {String.valueOf(id)};
+                String idtoSelect = PokerContract.PlayerToTournament.PLAYER + "=?";
+                Log.e(TAG, "query: " + id);
+                return database.query(PokerContract.PlayerToTournament.TABLE_NAME, toSelect, idtoSelect, select, null, null, null);
         }
         return cursor;
     }

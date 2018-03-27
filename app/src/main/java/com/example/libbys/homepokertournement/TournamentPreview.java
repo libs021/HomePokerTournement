@@ -14,8 +14,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.libbys.homepokertournement.ArrayAdapters.PayoutAdapter;
-import com.example.libbys.homepokertournement.ArrayAdapters.TournamentPlayerAdapter;
+import com.example.libbys.homepokertournement.Adapters.PayoutAdapter;
+import com.example.libbys.homepokertournement.Adapters.TournamentPlayerAdapter;
 import com.example.libbys.homepokertournement.CustomPokerClasses.PayOuts;
 import com.example.libbys.homepokertournement.CustomPokerClasses.TournamentPlayer;
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;

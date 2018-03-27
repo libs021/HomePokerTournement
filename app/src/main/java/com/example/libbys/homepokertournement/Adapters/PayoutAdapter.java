@@ -1,4 +1,4 @@
-package com.example.libbys.homepokertournement.ArrayAdapters;
+package com.example.libbys.homepokertournement.Adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

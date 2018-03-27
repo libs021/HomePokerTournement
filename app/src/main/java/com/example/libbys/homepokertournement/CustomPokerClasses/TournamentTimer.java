@@ -23,7 +23,7 @@ public class TournamentTimer {
     public TournamentTimer(Context context, View rootView) {
         mRound = 1;
         seconds = 0;
-        minutes = 0;
+        minutes = 20;
         mBlindsTextView = rootView.findViewById(R.id.tv_blinds);
         mTimeTextView = rootView.findViewById(R.id.tv_timer);
         mRoundTextView = rootView.findViewById(R.id.tv_round);
@@ -58,7 +58,7 @@ public class TournamentTimer {
     private void updateMinutes() {
         if (minutes != 0) minutes--;
         else {
-            minutes = 20;
+            minutes = 19;
             updateRound();
         }
     }
