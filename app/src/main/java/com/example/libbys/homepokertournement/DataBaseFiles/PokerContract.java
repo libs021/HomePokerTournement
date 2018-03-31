@@ -56,7 +56,6 @@ public final class PokerContract {
 
     //Table to hold what players are playing in what tournament.
     public static final class PlayerToTournament implements BaseColumns {
-        public static final String _ID = BaseColumns._ID;
         //Columns for table
         //Represents the PlayerID
         public static final String PLAYER = "Player";

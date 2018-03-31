@@ -2,7 +2,6 @@ package com.example.libbys.homepokertournement.Adapters;
 
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,8 +10,6 @@ import android.widget.TextView;
 
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
 import com.example.libbys.homepokertournement.R;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by Libby's on 3/25/2018.
@@ -49,7 +46,6 @@ public class PlayerResultsAdapter extends RecyclerView.Adapter<PlayerResultsAdap
     public PlayerResultsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View root = inflater.inflate(R.layout.playerresults, parent, false);
-        Log.e(TAG, "onBindViewHolder: ");
         return new PlayerResultsViewHolder(root);
     }
 

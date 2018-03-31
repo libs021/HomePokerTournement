@@ -154,7 +154,7 @@ public class TournamentInProgress extends AppCompatActivity implements Tournamen
                 updateTournamentToPlayer(playerID, tournAmentID, i + 1, prizes.get(i));
             }
             //Player didn't get a prize :(
-            else updateTournamentToPlayer(playerID, tournAmentID, i, 0);
+            else updateTournamentToPlayer(playerID, tournAmentID, i + 1, 0);
             cursorBuyin = playerToUpdate.getInt(playerToUpdate.getColumnIndex(PokerContract.PlayerEntry.BUYIN)) + cost;
             values.put(PokerContract.PlayerEntry.BUYIN, cursorBuyin);
             cursorPlayed = playerToUpdate.getInt(playerToUpdate.getColumnIndex(PokerContract.PlayerEntry.PLAYED)) + 1;

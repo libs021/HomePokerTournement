@@ -1,6 +1,5 @@
 package com.example.libbys.homepokertournement;
 
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentUris;
@@ -91,7 +90,7 @@ public class TournamentActivity extends AppCompatActivity {
 
             }
         });
-        final TimePickerDialog timePicker = new TimePickerDialog(TournamentActivity.this, AlertDialog.THEME_TRADITIONAL, DataListener, mHour, mMinute, true);
+        final TimePickerDialog timePicker = new TimePickerDialog(TournamentActivity.this, DataListener, mHour, mMinute, true);
 
         editText.setOnTouchListener(new View.OnTouchListener() {
             @Override
