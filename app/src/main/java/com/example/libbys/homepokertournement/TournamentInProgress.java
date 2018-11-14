@@ -96,7 +96,7 @@ public class TournamentInProgress extends AppCompatActivity implements Tournamen
     public void updatePlayer(int player, int count) {
         TournamentPlayer toUpdate = players.get(player);
         //checks to see if the player has already out.
-        if (toUpdate.getmChipCount() == 0) {
+        if (toUpdate.getmChipCount() <= 0) {
             Toast.makeText(this, "Cannot update a player that is already out.", Toast.LENGTH_SHORT).show();
         }
         toUpdate.setmChipCount(count);
@@ -135,10 +135,8 @@ public class TournamentInProgress extends AppCompatActivity implements Tournamen
 
         double payoutPercent[] = PayOuts.getPayoutPercentages(players.size());
         ArrayList<Double> prizes = new ArrayList<>();
-        for (int i = 0; i < payoutPercent.length; i++)
-            //we populate the prizes array at the end of the tournament, so in future development
-            //we can add rebuy funtions
-            prizes.add(payoutPercent[i] * players.size() * cost);
+        for (double aPayoutPercent : payoutPercent)
+            prizes.add(aPayoutPercent * players.size() * cost);
         for (int i = 0; i < players.size(); i++) {
             values.clear();
             cursorCashout = 0;
