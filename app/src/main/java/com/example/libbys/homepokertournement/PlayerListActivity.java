@@ -1,23 +1,20 @@
 package com.example.libbys.homepokertournement;
 
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
-import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CursorAdapter;
-import android.widget.ListView;
 
-import com.example.libbys.homepokertournement.Adapters.PokerPlayerCursorAdapter;
+import com.example.libbys.homepokertournement.Adapters.RecyclerViewPlayers;
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
 
 
@@ -26,47 +23,28 @@ import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
  * you can also add players to a tournament on this screen
  */
 public class PlayerListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-    PokerPlayerCursorAdapter cursorAdapter = new PokerPlayerCursorAdapter(this, null, 0);
-    Boolean[] isItemSelected;
+    RecyclerViewPlayers playerslist;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playerlist);
-        ListView listView = findViewById(R.id.PlayerListView);
-        listView.setAdapter(cursorAdapter);
+        //List behaves different depending on weather you access the list view from a tournament or the home screen.
+        //if you access via a tournament the list can add players to said tournament. If access via home screen lists acts as a list for
+        //reviewing the players and there tournament activity.
+        playerslist = new RecyclerViewPlayers(null,this,(getIntent().getData()==null));
+        RecyclerView rv = findViewById(R.id.RV_PlayerListView);
+        rv.setAdapter(playerslist);
+        rv.setLayoutManager(new LinearLayoutManager(this));
+
         getSupportLoaderManager().initLoader(7, null, PlayerListActivity.this);
         //If there is a URI in from the previous activity we are creating a new tournament and
         // the use should be selecting the players to add to the tournament.
         if (getIntent().getData() != null) {
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    //TODO find a better way to handle show and get what items are selected
-                    if (!isItemSelected[i])
-                        view.setBackgroundColor(getColor(R.color.colorPrimaryDark));
-                    else view.setBackgroundColor(0x00000);
-                    isItemSelected[i] = !isItemSelected[i];
-                }
-            });
-            addFinalizeButton();
 
-        } else listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.e("PlayerListActivity", "onItemClick: " + position);
-                Cursor data = cursorAdapter.getCursor();
-                data.moveToPosition(position);
-                int playerID = data.getInt(data.getColumnIndex(PokerContract.PlayerEntry._ID));
-                String playerName = data.getString(data.getColumnIndex(PokerContract.PlayerEntry.NAME));
-                Uri uri = ContentUris.withAppendedId(PokerContract.BASE_CONTENT_URI, playerID);
-                Intent intent = new Intent(PlayerListActivity.this, PlayerResultsActivity.class);
-                intent.setData(uri);
-                intent.putExtra("PLayerName", playerName);
-                startActivity(intent);
-            }
-        });
+            addFinalizeButton();
+        }
     }
 
     /**
@@ -112,11 +90,7 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        cursorAdapter.swapCursor(data);
-        isItemSelected = new Boolean[data.getCount()];
-        for (int i = 0; i < isItemSelected.length; i++) {
-            isItemSelected[i] = false;
-        }
+        playerslist.setData(data);
     }
 
     /**
@@ -128,8 +102,7 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
      */
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        cursorAdapter.swapCursor(null);
-        isItemSelected = null;
+        playerslist.setData(null);
 
     }
 
@@ -139,14 +112,15 @@ public class PlayerListActivity extends AppCompatActivity implements LoaderManag
         finalizeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Boolean[] isitemPressed = playerslist.getIsPressed();
                 Uri uri = getIntent().getData();
                 String ID = uri.getLastPathSegment();
                 int toID = Integer.parseInt(ID);
                 ContentValues values = new ContentValues();
-                Cursor items = cursorAdapter.getCursor();
+                Cursor items = playerslist.getData();
                 items.moveToFirst();
-                for (int i = 0; i < cursorAdapter.getCount(); i++) {
-                    if (isItemSelected[i]) {
+                for (int i = 0; i < items.getCount(); i++) {
+                    if (isitemPressed[i]) {
                         int playerID = items.getInt(items.getColumnIndex(PokerContract.PlayerEntry._ID));
                         values.put(PokerContract.PlayerToTournament.TOURNAMENT, toID);
                         values.put(PokerContract.PlayerToTournament.PLAYER, playerID);

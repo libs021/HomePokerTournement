@@ -6,8 +6,8 @@
     android:orientation="vertical"
     tools:context="com.example.libbys.homepokertournement.PlayerListActivity">
 
-        <ListView
-            android:id="@+id/PlayerListView"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/RV_PlayerListView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
