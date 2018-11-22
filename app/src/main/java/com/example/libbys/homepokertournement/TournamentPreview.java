@@ -91,6 +91,7 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
         });
     }
 
+
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         Uri fromPreviousActivity = getIntent().getData();
@@ -148,6 +149,8 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
 
                 //get array of prize percentages
                 double payoutPercent[] = PayOuts.getPayoutPercentages(playerCount);
+                //Clears the prizes list so it can be adjusted.
+                prizes.clear();
                 //Add the prizes to the prizes array by multiplying the total prize pool by the percentage
                 for (int i = 0; i < payoutPercent.length; i++)
                     prizes.add(payoutPercent[i] * prizepool);

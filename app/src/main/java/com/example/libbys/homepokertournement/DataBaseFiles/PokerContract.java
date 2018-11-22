@@ -6,10 +6,10 @@ import android.provider.BaseColumns;
 public final class PokerContract {
     public static final String PATH_TOURNAMENT = "Tournaments";
     public static final String PATH_GETPLAYERBYTOURNAMENTID = "PlayerBytournament";
-    public static final String CONTENT_AUTHORITY = "com.example.libbys.homepokertournement";
+    static final String CONTENT_AUTHORITY = "com.example.libbys.homepokertournement";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
-    public static final String PATH_PLAYERS = "Players";
-    public static final String PATH_PLAYERTOTOURNAMENT = "PlayertoTournament";
+    static final String PATH_PLAYERS = "Players";
+    static final String PATH_PLAYERTOTOURNAMENT = "PlayertoTournament";
 
     //class never needs to instantiated as it only holds constants
     private PokerContract() {
@@ -51,7 +51,8 @@ public final class PokerContract {
         static final String TABLE_NAME = "Tournaments";
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, TABLE_NAME);
         //represents the end time of the tournement
-        static final String ENDTIME = "EndTime";
+        public static final String ENDTIME = "EndTime";
+        public static final String ISCOMPLETE = "IsComplete";
     }
 
     //Table to hold what players are playing in what tournament.

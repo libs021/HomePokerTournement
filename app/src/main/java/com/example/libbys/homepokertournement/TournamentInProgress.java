@@ -24,7 +24,10 @@ import com.example.libbys.homepokertournement.CustomPokerClasses.TournamentTimer
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+
+import static java.lang.Boolean.TRUE;
 
 
 /**
@@ -47,6 +50,7 @@ public class TournamentInProgress extends AppCompatActivity implements Tournamen
         setContentView(R.layout.activity_tournamentinprogress);
         LinearLayout rootView = findViewById(R.id.ll_roottournamentinprogress);
         if (savedInstanceState == null) {
+            updateTournament(true);
             players = getIntent().getParcelableArrayListExtra("PlayersList");
             timer = new TournamentTimer(this, rootView);
             numberofPlayersBusted = 0;
@@ -119,22 +123,37 @@ public class TournamentInProgress extends AppCompatActivity implements Tournamen
         outState.putInt("Busted", numberofPlayersBusted);
         outState.putInt("Cost", cost);
     }
-
     public void endTournament() {
-        int cursorBuyin;
-        double cursorCashout;
-        int cursorPlayed;
-        double win;
-        ContentValues values = new ContentValues();
         listView.setOnItemClickListener(null);
         this.setTitle("Final Standings");
         TextView round = findViewById(R.id.tv_round);
         String congrats = getString(R.string.Congrats, players.get(0).getmName());
         round.setText(congrats);
-        String[] querySelect = {PokerContract.PlayerEntry.CASHOUT, PokerContract.PlayerEntry.BUYIN, PokerContract.PlayerEntry.PLAYED};
+        assignPrizes();
+        updateTournament(false);
+    }
+    //Will either start or stop the tournament based on the start boolean. Start will start the tournament. Stop will stop the tournament.
+    private void updateTournament(boolean start) {
+        ContentValues values = new ContentValues();
+        Calendar calendar = Calendar.getInstance();
+        String updateField;
+        if (start) updateField = PokerContract.TournamentEntry.STARTTIME;
+        else updateField = PokerContract.TournamentEntry.ENDTIME;
+        values.put(updateField,calendar.getTime().toString());
+        values.put(PokerContract.TournamentEntry.ISCOMPLETE,!start);
+        Uri uri = ContentUris.withAppendedId(PokerContract.TournamentEntry.CONTENT_URI,tournAmentID);
+        getContentResolver().update(uri,values,PokerContract.TournamentEntry._ID,null);
+    }
 
+    private void assignPrizes() {
+        int cursorBuyin;
+        double cursorCashout;
+        int cursorPlayed;
+        double win;
+        ContentValues values = new ContentValues();
         double payoutPercent[] = PayOuts.getPayoutPercentages(players.size());
         ArrayList<Double> prizes = new ArrayList<>();
+        String[] querySelect = {PokerContract.PlayerEntry.CASHOUT, PokerContract.PlayerEntry.BUYIN, PokerContract.PlayerEntry.PLAYED};
         for (double aPayoutPercent : payoutPercent)
             prizes.add(aPayoutPercent * players.size() * cost);
         for (int i = 0; i < players.size(); i++) {

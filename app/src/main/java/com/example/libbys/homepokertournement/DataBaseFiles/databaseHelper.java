@@ -25,6 +25,7 @@ public class databaseHelper extends SQLiteOpenHelper {
             PokerContract.TournamentEntry.ENDTIME + " DATETIME, " +
             PokerContract.TournamentEntry.GAME + " TEXT NOT NULL, " +
             PokerContract.TournamentEntry.COST + " INTEGER NOT NULL, " +
+            PokerContract.TournamentEntry.ISCOMPLETE + " BOOLEAN DEFAULT 0," +
             PokerContract.TournamentEntry.STARTINGCHIPS + " INTEGER DEFAULT 1500);";
 
 

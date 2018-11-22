@@ -135,6 +135,12 @@ public class PokerProvider extends ContentProvider {
                 return numberOfRowsUpdated;
             case TOURNAMENT_ID:
                 s = s + "=?";
+
+                //I know this is weird but I don't know of a better way.
+                if (strings==null) {
+                    String[] selection = {uri.getLastPathSegment()};
+                    strings = selection;
+                }
                 numberOfRowsUpdated = database.update(PokerContract.TournamentEntry.TABLE_NAME, contentValues, s, strings);
                 return numberOfRowsUpdated;
             case PLAYERTOTOURNAMENT:
