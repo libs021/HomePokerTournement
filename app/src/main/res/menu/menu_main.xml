@@ -3,8 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.libbys.homepokertournement.PlayerListActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/AddPlayer"
+        android:id="@+id/MenuAddPlayer"
+        app:showAsAction="never" />
+    <item
+        android:title="@string/NewTournament"
+        android:id="@+id/MenuNewTournament"
+        app:showAsAction="never" />
+    <item
+        android:title="@string/ViewPlayer"
+        android:id="@+id/MenuViewPlayer"
+        app:showAsAction="never" />
+    <item
+        android:title="@string/toggleupcoming_past"
+        android:id="@+id/MenuToggle"
         app:showAsAction="never" />
 </menu>
