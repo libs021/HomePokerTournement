@@ -53,6 +53,8 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent = new Intent(HomeActivity.this, TournamentPreview.class);
                 Uri uri = ContentUris.withAppendedId(PokerContract.TournamentEntry.CONTENT_URI, l);
+                Bundle bundle = createTournamentInfoBundle(adapterView,i);
+                intent.putExtras(bundle);
                 intent.setData(uri);
                 startActivity(intent);
             }
@@ -61,10 +63,22 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
+    private Bundle createTournamentInfoBundle(AdapterView<?> adapterView, int i) {
+        PokerTournamentCursorAdapter adapter = (PokerTournamentCursorAdapter) adapterView.getAdapter();
+        Cursor cursor = adapter.getCursor();
+        cursor.moveToPosition(i);
+        Bundle bundle = new Bundle();
+        bundle.putString(PokerContract.TournamentEntry.GAME,cursor.getString(cursor.getColumnIndex(PokerContract.TournamentEntry.GAME)));
+        bundle.putInt(PokerContract.TournamentEntry.COST,cursor.getInt(cursor.getColumnIndex(PokerContract.TournamentEntry.COST)));
+        bundle.putString(PokerContract.TournamentEntry.STARTTIME,cursor.getString(cursor.getColumnIndex(PokerContract.TournamentEntry.STARTTIME)));
+        bundle.putInt(PokerContract.TournamentEntry.STARTINGCHIPS,cursor.getInt(cursor.getColumnIndex(PokerContract.TournamentEntry.STARTINGCHIPS)));
+        return bundle;
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         String[] toSelect = {PokerContract.TournamentEntry._ID, PokerContract.TournamentEntry.GAME,
-                PokerContract.TournamentEntry.COST, PokerContract.TournamentEntry.STARTTIME};
+                PokerContract.TournamentEntry.COST, PokerContract.TournamentEntry.STARTTIME,PokerContract.TournamentEntry.STARTINGCHIPS};
         Calendar c = Calendar.getInstance();
         Date today = c.getTime();
         String time = databaseHelper.DATABASE_DATE_FORMAT.format(today);

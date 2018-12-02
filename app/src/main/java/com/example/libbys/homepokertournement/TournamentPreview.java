@@ -31,8 +31,6 @@ import static android.content.ContentUris.withAppendedId;
  * This will manage individual Tournaments prior to tournament starting will allow you to add players. Once the tournament starts you can update the chip counts.
  */
 public class TournamentPreview extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final int GETPLAYERLOADER = 10;
-    private static final int GETTOURNAMENTINFO = 17;
     TextView blindstartTimeTextView;
     ListView playerListView, payoutListView;
     private TournamentPlayerAdapter tournamentPlayerAdapter;
@@ -56,15 +54,8 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
         payoutAdapter = new PayoutAdapter(TournamentPreview.this, R.layout.playerintournamentlistview, prizes);
         payoutListView.setAdapter(payoutAdapter);
 
-        //Load info from saved instance if the id from the intent matches the saveddata. If not we are previewing a different tournament;
-        if (savedInstanceState != null) {
-            if (id != savedInstanceState.getLong("ID", 0))
-                getSupportLoaderManager().initLoader(GETPLAYERLOADER, null, TournamentPreview.this);
-            else {
-                players = savedInstanceState.getParcelableArrayList("Players");
-            }
-        }
-        getSupportLoaderManager().initLoader(GETPLAYERLOADER, null, TournamentPreview.this);
+        //TODO Load info from saved instance if the id from the intent matches the saveddata. If not we are previewing a different tournament;
+        getSupportLoaderManager().initLoader(0,null, this);
         playerListView = findViewById(R.id.playerintournament);
         tournamentPlayerAdapter = new TournamentPlayerAdapter(this, R.layout.playerintournamentlistview, players);
         playerListView.setAdapter(tournamentPlayerAdapter);
@@ -97,53 +88,28 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
         Uri fromPreviousActivity = getIntent().getData();
         Long tournamentID = ContentUris.parseId(fromPreviousActivity);
         String[] selectionArgs = {String.valueOf(tournamentID)};
-
-        switch (i) {
-            case GETPLAYERLOADER:
-                Uri toquery = Uri.withAppendedPath(PokerContract.BASE_CONTENT_URI, PokerContract.PATH_GETPLAYERBYTOURNAMENTID);
-                toquery = withAppendedId(toquery, tournamentID);
-                return new android.support.v4.content.CursorLoader(this, toquery, null, null, selectionArgs, null);
-            case GETTOURNAMENTINFO:
-                String[] toSelect = {PokerContract.TournamentEntry.STARTINGCHIPS, PokerContract.TournamentEntry.STARTTIME,
-                        PokerContract.TournamentEntry.COST};
-                Uri query = Uri.withAppendedPath(PokerContract.BASE_CONTENT_URI, PokerContract.PATH_TOURNAMENT);
-                String selection = PokerContract.TournamentEntry._ID + "=?";
-                query = withAppendedId(query, tournamentID);
-                return new android.support.v4.content.CursorLoader(this, query, toSelect, selection, selectionArgs, null);
-            default:
-                return null;
-
-        }
+        Uri toquery = Uri.withAppendedPath(PokerContract.BASE_CONTENT_URI, PokerContract.PATH_GETPLAYERBYTOURNAMENTID);
+        toquery = withAppendedId(toquery, tournamentID);
+        return new android.support.v4.content.CursorLoader(this, toquery, null, null, selectionArgs, null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         int startingChipCount;
-        switch (loader.getId()) {
-            case GETPLAYERLOADER:
-                if (cursor.moveToFirst()) {
-                    players.clear();
-                    do {
-                        int playerID = cursor.getInt(cursor.getColumnIndex(PokerContract.PlayerEntry._ID));
-                        TournamentPlayer playerToAdd = new TournamentPlayer(cursor.getString(cursor.getColumnIndex(PokerContract.PlayerEntry.NAME)), 0, playerID);
-                        players.add(playerToAdd);
-                    } while (cursor.moveToNext());
-                }
-                //this eliminates the race condition when both loaders kicked off at the same time. Since the Tournement info gets
-                //set on the player we can wait initialize the loader.
-                getSupportLoaderManager().initLoader(GETTOURNAMENTINFO, null, TournamentPreview.this);
-                //No need to notify change as we notify both adapters they changed when done loading info from the tournament
-                break;
-            case GETTOURNAMENTINFO:
-                cursor.moveToFirst();
-                startingChipCount = cursor.getInt(cursor.getColumnIndex(PokerContract.TournamentEntry.STARTINGCHIPS));
-                cost = cursor.getInt(cursor.getColumnIndex(PokerContract.TournamentEntry.COST));
-                String startTime = cursor.getString(cursor.getColumnIndex(PokerContract.TournamentEntry.STARTTIME));
-                if (players.size() != 0) {
-                    for (int i = 0; i < players.size(); i++) {
-                        players.get(i).setmChipCount(startingChipCount);
-                    }
-                }
+        if (cursor.moveToFirst()) {
+            players.clear();
+            do {
+                int playerID = cursor.getInt(cursor.getColumnIndex(PokerContract.PlayerEntry._ID));
+                TournamentPlayer playerToAdd = new TournamentPlayer(cursor.getString(cursor.getColumnIndex(PokerContract.PlayerEntry.NAME)), 0, playerID);
+                players.add(playerToAdd);
+            } while (cursor.moveToNext());
+            Intent intent = getIntent();
+            startingChipCount = intent.getIntExtra(PokerContract.TournamentEntry.STARTINGCHIPS,0);
+            cost = intent.getIntExtra(PokerContract.TournamentEntry.COST,0);
+            String startTime = intent.getStringExtra(PokerContract.TournamentEntry.STARTTIME);
+            if (players.size() != 0) {
+                for (int i = 0; i < players.size(); i++)
+                    players.get(i).setmChipCount(startingChipCount);
                 int playerCount = players.size();
                 int prizepool = playerCount * cost;
 
@@ -163,8 +129,9 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
                 }
                 payoutAdapter.notifyDataSetChanged();
                 tournamentPlayerAdapter.notifyDataSetChanged();
-        }
+            }
 
+        }
     }
 
     @Override
