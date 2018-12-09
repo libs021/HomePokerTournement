@@ -8,8 +8,9 @@ public final class PokerContract {
     public static final String PATH_GETPLAYERBYTOURNAMENTID = "PlayerBytournament";
     static final String CONTENT_AUTHORITY = "com.example.libbys.homepokertournement";
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
-    static final String PATH_PLAYERS = "Players";
-    static final String PATH_PLAYERTOTOURNAMENT = "PlayertoTournament";
+    public static final String PATH_PLAYERS = "Players";
+    public static final String PATH_PLAYERTOTOURNAMENT = "PlayertoTournament";
+
 
     //class never needs to instantiated as it only holds constants
     private PokerContract() {

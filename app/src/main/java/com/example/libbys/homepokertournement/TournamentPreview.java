@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -35,6 +36,8 @@ import static android.content.ContentUris.withAppendedId;
  * This will manage individual Tournaments prior to tournament starting will allow you to add players. Once the tournament starts you can update the chip counts.
  */
 public class TournamentPreview extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+    private static final int LOAD_PLAYER_INFO = 17;
+    private static final int LOAD_RESULTS = 10;
     private TournamentPlayerAdapter tournamentPlayerAdapter;
     private PayoutAdapter payoutAdapter;
     private ArrayList<TournamentPlayer> players;
@@ -48,8 +51,6 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
         TextView blindstartTimeTextView = findViewById(R.id.blinds);
         Intent intent = getIntent();
         String startTime = intent.getStringExtra(PokerContract.TournamentEntry.STARTTIME);
-        String currentDate = dateUtils.getCurrentDate();
-        if (currentDate.compareTo(startTime)>0) setUpPastTournament();
         try {
             Date toformat = dateUtils.DATABASE_DATE_FORMAT.parse(startTime);
             String formattedDate = dateUtils.APP_DATE_FORMAT.format(toformat);
@@ -67,7 +68,7 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
         payoutListView.setAdapter(payoutAdapter);
 
         //TODO Load info from saved instance if the id from the intent matches the saveddata. If not we are previewing a different tournament;
-        getSupportLoaderManager().initLoader(0,null, this);
+        getSupportLoaderManager().initLoader(LOAD_PLAYER_INFO,null, this);
         playerListView = findViewById(R.id.playerintournament);
         tournamentPlayerAdapter = new TournamentPlayerAdapter(this, R.layout.playerintournamentlistview, players);
         playerListView.setAdapter(tournamentPlayerAdapter);
@@ -100,6 +101,7 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
         StartTime.setText(R.string.Tournament_Results);
         addPlayerButton.setVisibility(View.GONE);
         startTournament.setVisibility(View.GONE);
+        getSupportLoaderManager().initLoader(LOAD_RESULTS,null,this);
 
     }
 
@@ -110,6 +112,26 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
         Uri fromPreviousActivity = getIntent().getData();
         Long tournamentID = ContentUris.parseId(fromPreviousActivity);
         String[] selectionArgs = {String.valueOf(tournamentID)};
+        switch (i){
+            case LOAD_PLAYER_INFO:
+                return loadPlayerInfo(tournamentID,selectionArgs);
+                // Use case LOAD_RESULTS just needed a default case;
+            default:
+                return loadResults(selectionArgs);
+
+        }
+
+    }
+
+    private Loader<Cursor> loadResults(String[] selectionArgs) {
+        Uri toquery = Uri.withAppendedPath(PokerContract.BASE_CONTENT_URI, PokerContract.PATH_PLAYERTOTOURNAMENT);
+        String selection = PokerContract.PlayerToTournament.TOURNAMENT + "=?";
+        return new android.support.v4.content.CursorLoader(this,toquery,null,selection,selectionArgs,null);
+
+
+    }
+
+    private Loader<Cursor> loadPlayerInfo(long tournamentID, String[] selectionArgs) {
         Uri toquery = Uri.withAppendedPath(PokerContract.BASE_CONTENT_URI, PokerContract.PATH_GETPLAYERBYTOURNAMENTID);
         toquery = withAppendedId(toquery, tournamentID);
         return new android.support.v4.content.CursorLoader(this, toquery, null, null, selectionArgs, null);
@@ -117,8 +139,37 @@ public class TournamentPreview extends AppCompatActivity implements LoaderManage
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
+        switch (loader.getId()) {
+            case LOAD_RESULTS:
+                extractPlayerResults(cursor);
+                break;
+            case LOAD_PLAYER_INFO:
+                extractPlayerInfor(cursor);
+        }
+    }
+
+    private void extractPlayerResults(Cursor cursor) {
+        //Cursor should be sorted by player ID so now we can iterate through
+        Collections.sort(players,new TournamentPlayer.sortByID());
+        int i =0;
         if (cursor.moveToFirst()) {
-            Intent intent = getIntent();
+            do {
+                int position = cursor.getInt(cursor.getColumnIndex(PokerContract.PlayerToTournament.POSITION));
+                TournamentPlayer player = players.get(i);
+                player.setmPosition(position);
+                i++;
+            } while (cursor.moveToNext());
+        }
+        Collections.sort(players, new TournamentPlayer.sortByPosition());
+        tournamentPlayerAdapter.notifyDataSetChanged();
+    }
+
+    private void extractPlayerInfor(Cursor cursor) {
+        Intent intent = getIntent();
+        String startTime = intent.getStringExtra(PokerContract.TournamentEntry.STARTTIME);
+        String currentTime = dateUtils.getCurrentDate();
+        if (startTime.compareTo(currentTime)<0) setUpPastTournament();
+        if (cursor.moveToFirst()) {
             int startingChipCount = intent.getIntExtra(PokerContract.TournamentEntry.STARTINGCHIPS,0);
             getPlayerInfo(cursor,startingChipCount);
             int cost = intent.getIntExtra(PokerContract.TournamentEntry.COST,0);

@@ -84,6 +84,8 @@ public class PokerProvider extends ContentProvider {
                 String idtoSelect = PokerContract.PlayerToTournament.PLAYER + "=?";
                 Log.e(TAG, "query: " + id);
                 return database.query(PokerContract.PlayerToTournament.TABLE_NAME, toSelect, idtoSelect, select, null, null, null);
+            case PLAYERTOTOURNAMENT:
+                return database.query(PokerContract.PlayerToTournament.TABLE_NAME,toSelect,selection,args,null,null,PokerContract.PlayerToTournament.PLAYER);
         }
         return cursor;
     }
