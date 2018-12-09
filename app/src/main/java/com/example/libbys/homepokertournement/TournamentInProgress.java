@@ -22,6 +22,7 @@ import com.example.libbys.homepokertournement.CustomPokerClasses.TournamentPlaye
 import com.example.libbys.homepokertournement.CustomPokerClasses.TournamentPlayerDialog;
 import com.example.libbys.homepokertournement.CustomPokerClasses.TournamentTimer;
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
+import com.example.libbys.homepokertournement.CustomPokerClasses.TournamentPlayer.sortByChips;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -91,7 +92,7 @@ public class TournamentInProgress extends AppCompatActivity implements Tournamen
             return;
         }
         numberofPlayersBusted++;
-        Collections.sort(players);
+        Collections.sort(players,new sortByChips());
         if (numberofPlayersBusted == players.size() - 1) endTournament();
         adapter.notifyDataSetChanged();
     }
@@ -104,7 +105,7 @@ public class TournamentInProgress extends AppCompatActivity implements Tournamen
             Toast.makeText(this, "Cannot update a player that is already out.", Toast.LENGTH_SHORT).show();
         }
         toUpdate.setmChipCount(count);
-        Collections.sort(players);
+        Collections.sort(players,new sortByChips());
         adapter.notifyDataSetChanged();
     }
 

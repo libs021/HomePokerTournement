@@ -25,7 +25,7 @@ public final class PokerContract {
         public static final String WIN = "Win";
         //Represents the number of times played.
         public static final String PLAYED = "Played";
-        //represents the total buyin of a palyer
+        //represents the total buyin of a player
         public static final String BUYIN = "Buyin";
         //represents the total cash out of player
         public static final String CASHOUT = "Cashout";

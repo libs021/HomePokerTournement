@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
 import com.example.libbys.homepokertournement.DataBaseFiles.databaseHelper;
+import com.example.libbys.homepokertournement.DataBaseFiles.dateUtils;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -166,7 +167,7 @@ public class TournamentActivity extends AppCompatActivity {
         Calendar c = Calendar.getInstance();
         Date today = c.getTime();
         try {
-            Date d = databaseHelper.DATABASE_DATE_FORMAT.parse(dateTime);
+            Date d = dateUtils.DATABASE_DATE_FORMAT.parse(dateTime);
             if (d.after(today)) return true;
         } catch (java.text.ParseException e) {
             e.printStackTrace();

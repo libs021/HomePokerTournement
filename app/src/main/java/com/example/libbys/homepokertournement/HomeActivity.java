@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
@@ -17,7 +18,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.example.libbys.homepokertournement.Adapters.PokerTournamentCursorAdapter;
 import com.example.libbys.homepokertournement.CustomPokerClasses.NewPlayerDialog;
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
-import com.example.libbys.homepokertournement.DataBaseFiles.databaseHelper;
+import com.example.libbys.homepokertournement.DataBaseFiles.dateUtils;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -75,13 +75,14 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
         return bundle;
     }
 
+    @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         String[] toSelect = {PokerContract.TournamentEntry._ID, PokerContract.TournamentEntry.GAME,
                 PokerContract.TournamentEntry.COST, PokerContract.TournamentEntry.STARTTIME,PokerContract.TournamentEntry.STARTINGCHIPS};
         Calendar c = Calendar.getInstance();
         Date today = c.getTime();
-        String time = databaseHelper.DATABASE_DATE_FORMAT.format(today);
+        String time = dateUtils.DATABASE_DATE_FORMAT.format(today);
         String selection;
         if (upcoming) selection = PokerContract.TournamentEntry.STARTTIME + ">?";
         else selection = PokerContract.TournamentEntry.STARTTIME + "<?";
@@ -91,12 +92,12 @@ public class HomeActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor cursor) {
         cursorAdapter.swapCursor(cursor);
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         cursorAdapter.swapCursor(null);
     }
 

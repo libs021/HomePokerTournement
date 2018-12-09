@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.libbys.homepokertournement.DataBaseFiles.PokerContract;
 import com.example.libbys.homepokertournement.DataBaseFiles.databaseHelper;
+import com.example.libbys.homepokertournement.DataBaseFiles.dateUtils;
 import com.example.libbys.homepokertournement.R;
 
 import java.text.ParseException;
@@ -65,8 +66,8 @@ public class PokerTournamentCursorAdapter extends CursorAdapter {
         String cost1 = (cursor.getString(cursor.getColumnIndex(PokerContract.TournamentEntry.COST)));
         String gametype = (cursor.getString(cursor.getColumnIndex(PokerContract.TournamentEntry.GAME)));
         try {
-            Date toformat = databaseHelper.DATABASE_DATE_FORMAT.parse(date1);
-            String formattedDate = databaseHelper.APP_DATE_FORMAT.format(toformat);
+            Date toformat = dateUtils.DATABASE_DATE_FORMAT.parse(date1);
+            String formattedDate = dateUtils.APP_DATE_FORMAT.format(toformat);
             date.setText(context.getApplicationContext().getString(R.string.DateDispley, formattedDate));
         } catch (ParseException e) {
             e.printStackTrace();

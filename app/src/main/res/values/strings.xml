@@ -41,6 +41,7 @@
     <string name="pokerimage">PokerImage</string>
     <string name="upcoming_tournaments">Upcoming Tournaments</string>
     <string name="previous_Tournaments">Previous Tournaments</string>
+    <string name="Tournament_Results">Tournament Results</string>
     <string-array name="GameList">
         <item> "Texas Hold em"</item>
         <item> "Omaha</item>
